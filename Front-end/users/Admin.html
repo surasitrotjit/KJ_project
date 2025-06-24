@@ -150,6 +150,32 @@
           <button type="submit">บันทึก</button>
         </form>
       </section>
+      <section id="schedule" class="content-section hidden">
+        <h2>ตารางเรียน</h2>
+        <label>เลือกชั้นเรียน:
+          <select id="scheduleClassSelect" required>
+            <option value="" disabled selected hidden>เลือกชั้นเรียน</option>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1/1">ป.1/1</option>
+            <option value="ป.2/1">ป.2/1</option>
+            <option value="ป.3/1">ป.3/1</option>
+          </select>
+        </label>
+        <label>เลือกวัน:
+          <select id="scheduleDaySelect">
+            <option value="">ทุกวัน</option>
+            <option value="จันทร์">จันทร์</option>
+            <option value="อังคาร">อังคาร</option>
+            <option value="พุธ">พุธ</option>
+            <option value="พฤหัสบดี">พฤหัสบดี</option>
+            <option value="ศุกร์">ศุกร์</option>
+          </select>
+        </label>
+        <button id="showScheduleBtn" type="button">ดูตารางเรียน</button>
+        <div id="showScheduleTableContainer" style="margin-top:24px;"></div>
+      </section>
       <section id="editSchedule" class="content-section hidden">
         <h2>แก้ไขตารางเรียน</h2>
         <label>เลือกชั้นเรียน:

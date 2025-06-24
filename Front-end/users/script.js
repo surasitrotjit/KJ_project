@@ -4,6 +4,8 @@ function showSection(sectionId) {
         section.classList.add('hidden');
     });
     document.getElementById(sectionId).classList.remove('hidden');
+    // เพิ่มบรรทัดนี้
+    localStorage.setItem('lastSection', sectionId);
 }
 
 // Function to add a newly uploaded item to the gallery
@@ -441,17 +443,32 @@ async function renderStudentTableSimple() {
 // เรียกใช้เมื่อโหลดหน้า
 window.addEventListener('DOMContentLoaded', function () {
     renderStudentTableSimple();
+    // เพิ่มบรรทัดนี้
+    const lastSection = localStorage.getItem('lastSection') || 'studentTableSection';
+    showSection(lastSection);
 });
-// เมื่อโหลดหน้าเสร็จ ให้แสดงหน้า "ตารางรายชื่อนักเรียน"
-window.addEventListener('DOMContentLoaded', function () {
-    showSection('studentTableSection');
-});
+// // เมื่อโหลดหน้าเสร็จ ให้แสดงหน้า "ตารางรายชื่อนักเรียน"
+// window.addEventListener('DOMContentLoaded', function () {
+//     showSection('studentTableSection');
+// });
 
 const scheduleDays = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
 const schedulePeriods = [
     "08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00",
     "12:00-13:00", "13:00-14:00", "14:00-15:00", "15:00-16:00"
 ];
+
+// ฟังก์ชันสีพื้นหลังแต่ละวัน
+function getDayColor(day) {
+    switch (day) {
+        case "จันทร์": return "#ffe066";
+        case "อังคาร": return "#ffb3b3";
+        case "พุธ": return "#b3e6e6";
+        case "พฤหัสบดี": return "#ffd699";
+        case "ศุกร์": return "#b3c6ff";
+        default: return "#fff";
+    }
+}
 
 // โหลดข้อมูลตารางเรียนจาก backend
 async function loadSchedule() {
@@ -469,7 +486,7 @@ async function saveSchedule(schedule) {
 }
 
 // ฟอร์มเพิ่ม/แก้ไขตารางเรียน "เฉพาะวัน"
-function renderEditScheduleDayForm(scheduleData, className, day) {
+function renderEditScheduleDayForm(scheduleData, className, day, updateForm) {
     const formDiv = document.getElementById('editScheduleFormContainer');
     let html = `<form id="editScheduleDayForm"><table class="schedule-table" style="width:100%;background:#ffe4e1;">
     <thead>
@@ -503,10 +520,12 @@ function renderEditScheduleDayForm(scheduleData, className, day) {
         });
         await saveSchedule(scheduleData);
         alert('บันทึกตารางเรียนสำเร็จ');
+        // refresh ฟอร์มเดิม ไม่เปลี่ยน section
+        if (typeof updateForm === "function") updateForm();
     };
 }
 
-// แสดงตารางเรียนรวมทุกวัน (เหมือนภาพ)
+// แสดงตารางเรียนรวมทุกวัน
 function renderScheduleTable(scheduleData, className) {
     const container = document.getElementById('scheduleTableContainer');
     if (!container) return;
@@ -533,16 +552,47 @@ function renderScheduleTable(scheduleData, className) {
     container.innerHTML = html;
 }
 
-// สีพื้นหลังแต่ละวัน
-function getDayColor(day) {
-    switch (day) {
-        case "จันทร์": return "#ffe066";
-        case "อังคาร": return "#ffb3b3";
-        case "พุธ": return "#b3e6e6";
-        case "พฤหัสบดี": return "#ffd699";
-        case "ศุกร์": return "#b3c6ff";
-        default: return "#fff";
+// ฟังก์ชันแสดงตารางเรียน (เลือกวัน/ทุกวัน)
+function renderScheduleTableView(scheduleData, className, day) {
+    const container = document.getElementById('showScheduleTableContainer');
+    if (!scheduleData[className]) {
+        container.innerHTML = '<p style="color:red;">ยังไม่มีข้อมูลตารางเรียนสำหรับชั้นนี้</p>';
+        return;
     }
+    let html = `<table class="schedule-table" border="1" style="width:100%;background:#eaf6fb;text-align:center;">`;
+    if (!day) {
+        // แสดงทั้งสัปดาห์
+        html += `<thead>
+            <tr>
+                <th style="background:#b2e0f7;">เวลา</th>
+                ${schedulePeriods.map(period => `<th style="background:#b2e0f7;">${period}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            ${scheduleDays.map(d => `
+                <tr>
+                    <td style="background:${getDayColor(d)};font-weight:bold;">${d}</td>
+                    ${schedulePeriods.map((_, i) => `<td>${(scheduleData[className][d] && scheduleData[className][d][i]) || ""}</td>`).join('')}
+                </tr>
+            `).join('')}
+        </tbody>`;
+    } else {
+        // แสดงเฉพาะวันเดียว
+        html += `<thead>
+            <tr>
+                <th style="background:#b2e0f7;">เวลา</th>
+                ${schedulePeriods.map(period => `<th style="background:#b2e0f7;">${period}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="background:${getDayColor(day)};font-weight:bold;">${day}</td>
+                ${schedulePeriods.map((_, i) => `<td>${(scheduleData[className][day] && scheduleData[className][day][i]) || ""}</td>`).join('')}
+            </tr>
+        </tbody>`;
+    }
+    html += `</table>`;
+    container.innerHTML = html;
 }
 
 // โหลดและแสดงฟอร์มแก้ไขตารางเรียนเฉพาะวัน
@@ -551,10 +601,11 @@ async function loadEditSchedule() {
     const classSelect = document.getElementById('editScheduleClassSelect');
     const daySelect = document.getElementById('editScheduleDaySelect');
     const showTableBtn = document.getElementById('showScheduleTableBtn');
+    // ประกาศ updateForm ให้ส่งเข้า renderEditScheduleDayForm
     function updateForm() {
         document.getElementById('scheduleTableContainer').innerHTML = '';
         if (classSelect.value && daySelect.value) {
-            renderEditScheduleDayForm(scheduleData, classSelect.value, daySelect.value);
+            renderEditScheduleDayForm(scheduleData, classSelect.value, daySelect.value, updateForm);
         } else {
             document.getElementById('editScheduleFormContainer').innerHTML = '';
         }
@@ -571,7 +622,22 @@ async function loadEditSchedule() {
     updateForm();
 }
 
-// เรียกเมื่อเปิด section editSchedule
+// โหลดและแสดงตารางเรียน (เลือกวัน/ทุกวัน)
+async function loadScheduleSection() {
+    let scheduleData = await loadSchedule();
+    const classSelect = document.getElementById('scheduleClassSelect');
+    const daySelect = document.getElementById('scheduleDaySelect');
+    const showBtn = document.getElementById('showScheduleBtn');
+    showBtn.onclick = function () {
+        if (classSelect.value) {
+            renderScheduleTableView(scheduleData, classSelect.value, daySelect.value);
+        } else {
+            alert('กรุณาเลือกชั้นเรียน');
+        }
+    };
+}
+
+// ปรับ showSection ให้รองรับทั้ง editSchedule และ schedule
 const _oldShowSection = window.showSection;
 window.showSection = function (sectionId) {
     document.querySelectorAll('.content-section').forEach(section => {
@@ -579,6 +645,6 @@ window.showSection = function (sectionId) {
     });
     document.getElementById(sectionId).classList.remove('hidden');
     if (sectionId === 'editSchedule') loadEditSchedule();
+    if (sectionId === 'schedule') loadScheduleSection();
     if (_oldShowSection) _oldShowSection(sectionId);
 };
-
