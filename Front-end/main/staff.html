@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>บุคลากร</title>
+  <link rel="stylesheet" href="main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+<!--  Overlay for sidebar -->
+<div class="overlay" id="overlay"></div>
+
+<!-- <-- Sidebar Button -->
+<div class="sidebar-btn" id="sidebarBtn">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="logo-container-sidebar">
+        <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์ Logo" class="sidebar-logo">
+        <div class="close-btn" id="closeSidebarBtn">&times;</div>
+    </div>
+    <nav class="sidebar-menu">
+        <a href="main.html" class="menu-item"><i class="fas fa-home"></i><span>หน้าหลัก</span></a>
+        <a href="history.html" class="menu-item"><i class="fas fa-id-card"></i><span>ประวัติโรงเรียน</span></a>
+        <a href="award.html" class="menu-item"><i class="fas fa-award"></i><span>รางวัลความภาคภูมิใจ</span></a>
+        <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
+        <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
+        <a href="activity.html" class="menu-item"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
+        <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item">
+          <i class="fas fa-comments"></i><span>ถาม-ตอบ</span>
+        </a>
+        <a href="news.html" class="menu-item"><i class="fas fa-book-open"></i><span>ข่าวสารทั่วไป</span></a>
+        
+    </nav>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-container">
+    <header>
+        <div class="logo-container">
+            <div class="logo">
+                <img src="../Image/logo.png" alt="โลโก้">
+            </div>
+            <div>
+                <div class="school-name">โรงเรียนอนุบาลกุลจินต์</div>
+                <div class="school-name-en">Kunlajin Kindergarten</div>
+            </div>
+        </div>
+        <div class="hamburger" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-text">
+            ยินดีต้อนรับสู่เว็บไซต์<br>โรงเรียนอนุบาลกุลจินต์
+        </div>
+        <div class="motto-banner">
+            "พัฒนาการดี มีคุณธรรม พร้อมนำชุมชน"
+        </div>
+    </div>
+
+    <div class="staff-main-content">
+        <div class="announcement-header">
+            <div class="bell-icon">🔔</div>
+            <div>บุคลากร</div>
+        </div>
+
+        <div class="logo-center">
+            <img src="../Image/logo.png" alt="โลโก้โรงเรียน" />
+        </div>
+        <div class="staff-name-center">โครงสร้างองค์กรโรงเรียนอนุบาลกุลจินต์</div>
+
+        <div class="staff-main-content">
+          <div class="org-chart-wrapper">
+            <div class="org-chart">
+              <!-- ลำดับ 1 -->
+              <div class="staff-row">
+                <div class="staff-card" data-name="นางกรรณิกา กุลจินต์" data-position="ผู้จัดการ / ผู้รับใบอนุญาติ" data-img="../users/imguser/Jeab.png ">
+                  <img src="../users/imguser/Jeab.png " alt="ผู้จัดการ / ผู้รับใบอนุญาติ">
+                  <p>นางกรรณิกา กุลจินต์</p>
+                  <small>ผู้จัดการ / ผู้รับใบอนุญาติ</small>
+                </div>
+              </div>
+        
+              <!-- ลำดับ 2 -->
+              <div class="staff-row">
+                  <div class="staff-card" data-name="นายโชคชัย ใจฐิติวิทย์" data-position="ผู้ช่วยผู้จัดการ" data-img="../users/imguser/ChockChai.png">
+                    <img src="../users/imguser/ChockChai.png" alt="ผู้ช่วยผู้จัดการ">
+                  <p>นายโชคชัย ใจฐิติวิทย์</p>
+                  <small>ผู้ช่วยผู้จัดการ</small>
+                </div>
+                <div class="staff-card" data-name="นายกรรณสูรย์ ใจฐิติวิทย์" data-position="ผู้ช่วยผู้จัดการฝ่ายบุคคล" data-img="../users/imguser/Kong.png"> 
+                  <img src="../users/imguser/Kong.png" alt="ผู้ช่วยผู้จัดการฝ่ายบุคคล">
+                <p>นายกรรณสูรย์ ใจฐิติวิทย์</p>
+                  <small>ผู้ช่วยผู้จัดการฝ่ายบุคคล</small>
+                </div>
+                <div class="staff-card" data-name="นายกิติพันธ์ ใจฐิติวิทย์" data-position="ผู้ช่วยผู้จัดการฝ่ายเทคโนโลยี" data-img="../users/imguser/Get.png">
+                  <img src="../users/imguser/Get.png" alt="ผู้ช่วยผู้จัดการฝ่ายเทคโนโลยี">
+                  <p>นายกิติพันธ์ ใจฐิติวิทย์</p>
+                  <small>ผู้ช่วยผู้จัดการฝ่ายเทคโนโลยี</small>
+
+                </div>
+              </div>
+        
+              <!-- ลำดับ 3 -->
+              <div class="staff-row">
+                <div class="staff-card" data-name="นางกัลยา อารมฤธิ์" data-position="รองผู้อำนวยการผ่ายปฐมวัย" data-img="../users/imguser/Ya.png">
+                  <img src="../users/imguser/Ya.png" alt="รองผู้อำนวยการผ่ายปฐมวัย">
+                  <p>นางกัลยา อารมฤธิ์</p>
+                  <small>รองผู้อำนวยการผ่ายปฐมวัย</small>
+                </div>
+                <div class="staff-card" data-name="นางสาวระนอง สุวรรณทอง" data-position="ผู้อำนวยการ " data-img="../users/imguser/Nui.png">
+                  <img src="../users/imguser/Nui.png" alt="ผู้อำนวยการ">
+                  <p>นางสาวระนอง สุวรรณทอง</p>
+                  <small>ผู้อำนวยการ</small>
+                </div>
+                <div class="staff-card" data-name="นางนุชรี กิตต์ธนาฒย์" data-position="รองผู้อำนวยการผ่ายการศึกษาเด็กพิเศษ" data-img="../users/imguser/Ta.png"> 
+                  <img src="../users/imguser/Ta.png" alt="รองผู้อำนวยการผ่ายการศึกษาเด็กพิเศษ">
+                  <p>นางนุชรี กิตต์ธนาฒย์</p>
+                  <small>รองผู้อำนวยการผ่ายการศึกษาเด็กพิเศษ</small>
+                </div>
+              </div>
+        
+              <!-- ลำดับ 4 -->
+              <div class="staff-row">
+                <div class="staff-card" data-name="นายนิโรจน์ ทองรักจันทร์" data-position="โปรแกรมเมอร์ " data-img="../users/imguser/Nong.png">
+                  <img src="../users/imguser/Nong.png" alt="โปรแกรมเมอร์">
+                  <p>นายนิโรจน์ ทองรักจันทร์</p>
+                  <small>โปรแกรมเมอร์</small>
+                </div>
+                <div class="staff-card" data-name="นางสาวสุภาพร แก้วชูทอง" data-position="ครูประจำชั้นอนุบาล 1 " data-img="../users/imguser/Toon.png">
+                  <img src="../users/imguser/Toon.png" alt="ครูประจำชั้นอนุบาล 1">
+                  <p>นางสาวสุภาพร แก้วชูทอง</p>
+                  <small>ครูประจำชั้นอนุบาล 1</small>
+                </div>
+                <div class="staff-card" data-name="นางสาวสิริวรรณ นาคศรี" data-position="ครูผู้ช่วย" data-img="../users/imguser/Oil.png">
+                  <img src="../users/imguser/Oil.png" alt="ครูผู้ช่วย">
+                  <p>นางสาวสิริวรรณ นาคศรี</p>
+                  <small>ครูผู้ช่วย</small>
+                </div>
+                <div class="staff-card" data-name="นางสาวพรพิรุณ สุดแสน" data-position="ครูผู้ช่วย" data-img="../users/imguser/Bow.png">
+                  <img src="../users/imguser/Bow.png" alt="ครูผู้ช่วย">
+                  <p>นางสาวพรพิรุณ สุดแสน</p>
+                  <small>ครูผู้ช่วย</small>
+                </div>
+                <div class="staff-card" data-name="นางหัสนัย อารมฤธิ์" data-position="ครูผู้ช่วย" data-img="../users/imguser/Air.png">
+                  <img src="../users/imguser/Air.png" alt="ครูผู้ช่วย">
+                  <p>นางหัสนัย อารมฤธิ์</p>
+                  <small>ครูผู้ช่วย</small>
+                  </div>
+                <div class="staff-card" data-name="นางกัลยาณี เพชรพรรณ" data-position="ครูผู้ช่วย" data-img="../users/imguser/Queen.png">
+                  <img src="../users/imguser/Queen.png" alt="ครูผู้ช่วย">
+                  <p>นางกัลยาณี เพชรพรรณ</p>
+                  <small>ครูผู้ช่วย</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    <footer>
+        <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
+        <div class="school-address">1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110</div>
+        <div class="school-contact">Tel. : 074-257884, Fax : 074-258107, E-mail : Kunlajin@gmail.com</div>
+    </footer>
+</div>
+
+<!-- JavaScript -->
+<script>
+const sidebarBtn = document.getElementById('sidebarBtn');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.style.display = 'block';
+}
+
+function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.style.display = 'none';
+}
+
+sidebarBtn.addEventListener('click', openSidebar);
+hamburgerBtn.addEventListener('click', openSidebar);
+closeSidebarBtn.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
+
+window.addEventListener('scroll', function () {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+</script>
+
+<!-- Popup -->
+<div id="popup" class="popup-overlay" onclick="closePopup(event)">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup(event)">&times;</span>
+      <img id="popup-img" src="" alt="รูปบุคลากร">
+      <h3 id="popup-name">ชื่อ</h3>
+      <p id="popup-position">ตำแหน่ง</p>
+    </div>
+</div>
+
+<script>
+function openPopup(name, position, imgSrc) {
+  document.getElementById('popup-name').textContent = name;
+  document.getElementById('popup-position').textContent = position;
+  document.getElementById('popup-img').src = imgSrc;
+  document.getElementById('popup').style.display = 'flex';
+}
+
+function closePopup(event) {
+  if (event.target.classList.contains('popup-overlay') || event.target.classList.contains('close-btn')) {
+    document.getElementById('popup').style.display = 'none';
+  }
+}
+
+document.querySelectorAll('.staff-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const name = card.getAttribute('data-name');
+    const position = card.getAttribute('data-position');
+    const img = card.getAttribute('data-img');
+    openPopup(name, position, img);
+  });
+});
+</script>
+
+</body>
+</html> 

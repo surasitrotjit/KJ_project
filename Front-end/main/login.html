@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../main/login.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="login-box">
+        <h2>Login</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username" />
+            <i>👤</i>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password" />
+            <i>🔒</i>
+        </div>
+        <button class="login-btn" onclick="login()">Login</button>
+    </div>
+
+    <script>
+        const users = {
+            user01: { password: "1234", role: "Licensee" },
+            user02: { password: "2345", role: "Director" },
+            user03: { password: "3456", role: "Medic" },
+            user04: { password: "4567", role: "Teacher" },
+            user05: { password: "5678", role: "Registrar" },
+            user06: { password: "6789", role: "Administrator" },
+            user07: { password: "7890", role: "Parents" }
+        };
+
+        function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (!username || !password) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณากรอกข้อมูลให้ครบ',
+                    text: 'ต้องกรอกทั้ง Username และ Password',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+
+            const user = users[username];
+
+            if (!user) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ไม่พบชื่อผู้ใช้',
+                    text: `ชื่อผู้ใช้ "${username}" ไม่มีในระบบ`,
+                    confirmButtonText: 'ลองใหม่'
+                });
+                return;
+            }
+
+            if (user.password !== password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'รหัสผ่านไม่ถูกต้อง',
+                    text: 'โปรดตรวจสอบรหัสผ่านของคุณอีกครั้ง',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+            
+            // ✅ ล็อกอินสำเร็จ
+            Swal.fire({
+                icon: 'success',
+                title: 'เข้าสู่ระบบสำเร็จ',
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                const role = user.role;
+                if (role === "Administrator") {
+                    window.location.href = "../../Front-end/users/Admin.html";
+                } else if (role === "Licensee") {
+                    window.location.href = "../../Front-end/users/Licensee.html";
+                } else if (role === "Director") {
+                    window.location.href = "../../Front-end/users/Director.html";
+                } else if (role === "Medic") {
+                    window.location.href = "../../Front-end/users/Medic.html";
+                } else if (role === "Registrar") {
+                    window.location.href = "../../Front-end/users/Registrar.html";
+                } else if (role === "Parents") {
+                    window.location.href = "../../Front-end/users/Parents.html";
+                } else if (role === "Teacher") {
+                    window.location.href = "../../Front-end/users/Teacher.html";
+                }
+            });
+        }
+    </script>
+    <script>
+        document.getElementById("username").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") login();
+        });
+        document.getElementById("password").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") login();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{
+  "students": [
+    {
+      "id": "7f7f",
+      "studentId": "KJ52342878234",
+      "firstName": "สมใจ",
+      "lastName": "นางนง",
+      "nickname": "น้องไอซ์",
+      "class": "อนุบาล 1"
+    },
+    {
+      "id": "59ba",
+      "studentId": "KJ5234287554",
+      "firstName": "นนท์",
+      "lastName": "แสงทอง",
+      "nickname": "น้องฟิว",
+      "class": "อนุบาล 2"
+    },
+    {
+      "id": "cbb3",
+      "studentId": "KJ523842444235",
+      "firstName": "สมจิตแล้วไงวะ",
+      "lastName": "จงดี",
+      "nickname": "เบีย",
+      "class": "อนุบาล 3"
+    },
+    {
+      "id": "f065",
+      "studentId": "KJ523428956",
+      "firstName": "สมชาย",
+      "lastName": "ใจดี",
+      "nickname": "อิอิ",
+      "class": "อนุบาล 1"
+    },
+    {},
+    {
+      "studentId": "KJ5234287845343",
+      "firstName": "ด.ช. สุรพล",
+      "lastName": "เทพแท้",
+      "nickname": "ไอซ์ซึ",
+      "class": "อนุบาล 3",
+      "id": "2253"
+    },
+    {
+      "studentId": "KJ2131255636",
+      "firstName": "สมหญิง",
+      "lastName": "นางบง",
+      "nickname": "อ้อย",
+      "class": "ป.1",
+      "id": "1740"
+    },
+    {
+      "studentId": "KJ523428723154",
+      "firstName": "สสส",
+      "lastName": "ฟฟฟ",
+      "nickname": "หวย",
+      "class": "ป.1",
+      "id": "827c"
+    }
+  ]
+}

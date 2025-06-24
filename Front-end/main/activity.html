@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ภาพกิจกรรม - โรงเรียนอนุบาลกุลจินต์</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Overlay for sidebar -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar Button -->
+    <div class="sidebar-btn" id="sidebarBtn">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Logo Header -->
+        <div class="logo-container-sidebar">
+            <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์ Logo" class="sidebar-logo">
+            <div class="close-btn" id="closeSidebarBtn">&times;</div>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="main.html" class="menu-item"><i class="fas fa-home"></i><span>หน้าหลัก</span></a>
+            <a href="history.html" class="menu-item"><i class="fas fa-id-card"></i><span>ประวัติโรงเรียน</span></a>
+            <a href="award.html" class="menu-item"><i class="fas fa-award"></i><span>รางวัลความภาคภูมิใจ</span></a>
+            <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
+            <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
+            <a href="activity.html" class="menu-item active"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
+            <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item">
+                <i class="fas fa-comments"></i><span>ถาม-ตอบ</span>
+            </a>
+            <a href="news.html" class="menu-item"><i class="fas fa-book-open"></i><span>ข่าวสารทั่วไป</span></a>
+            <a href="contact.html" class="menu-item"><i class="fas fa-phone"></i><span>ติดต่อ</span></a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="../Image/logo.png" alt="โลโก้">
+                </div>
+                <div>
+                    <div class="school-name">โรงเรียนอนุบาลกุลจินต์</div>
+                    <div class="school-name-en">Kunlajin Kindergarten</div>
+                </div>
+            </div>
+            <div class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-text">
+                ภาพกิจกรรม<br>โรงเรียนอนุบาลกุลจินต์
+            </div>
+            <div class="motto-banner">
+                "พัฒนาการดี มีคุณธรรม พร้อมนำชุมชน"
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="announcement-header">
+                <div class="bell-icon">🔔</div>
+                <div>ภาพกิจกรรม</div>
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+            </div>
+            
+            <!-- Container for activities -->
+            <div id="activityContainer" class="activity-grid">
+                <!-- Activities will be loaded here dynamically -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer>
+            <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
+            <div class="school-address">1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110</div>
+            <div class="school-contact">Tel. : 074-257884, Fax : 074-258107, E- mail : Kunlajin@gmail.com</div>
+        </footer>
+    </div>
+
+    <!-- Modal for displaying full-size image and description -->
+    <div id="imageModal" class="modal">
+        <img id="modalImage" class="modal-content" />
+        <div id="modalDescription" class="modal-description"></div>
+    </div>
+
+    <!-- JavaScript for the page -->
+    <script>
+        // Sidebar functionality
+        const sidebarBtn = document.getElementById('sidebarBtn');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const mainContainer = document.querySelector('.main-container');
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            overlay.style.display = 'block';
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.style.display = 'none';
+        }
+        sidebarBtn.addEventListener('click', openSidebar);
+        hamburgerBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalDescription = document.getElementById('modalDescription');
+
+        function openModal(imageSrc, description) {
+            modal.style.display = 'flex';
+            modalImage.src = imageSrc;
+            modalDescription.textContent = description;
+        }
+        // ปิด modal เมื่อคลิกที่ว่าง (ยกเว้นคลิกที่รูปหรือคำอธิบาย)
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Fetch and display activities
+        async function loadActivities() {
+            const activityContainer = document.getElementById('activityContainer');
+            const loadingElement = document.getElementById('loading');
+            try {
+                const response = await fetch('http://localhost:3000/activities');
+                const activities = await response.json();
+                loadingElement.style.display = 'none';
+                if (activities.length === 0) {
+                    activityContainer.innerHTML = '<div class="no-activities">ยังไม่มีกิจกรรมในขณะนี้</div>';
+                    return;
+                }
+                activityContainer.innerHTML = '';
+                activities.forEach(activity => {
+                    const card = document.createElement('div');
+                    card.className = 'activity-card';
+                    card.innerHTML = `
+                        <img src="http://localhost:3000${activity.imagePath}" alt="กิจกรรม" class="activity-image">
+                        <div class="activity-info">${activity.detail}</div>
+                        <a href="#" class="activity-btn">ดูเพิ่มเติม</a>
+                    `;
+                    card.addEventListener('click', () => {
+                        openModal("http://localhost:3000" + activity.imagePath, activity.detail);
+                    });
+                    activityContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                loadingElement.style.display = 'none';
+                activityContainer.innerHTML = '<div class="no-activities">ไม่สามารถโหลดข้อมูลกิจกรรมได้ กรุณาลองใหม่อีกครั้ง</div>';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadActivities);
+    </script>
+</body>
+</html>

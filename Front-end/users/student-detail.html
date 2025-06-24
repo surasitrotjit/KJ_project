@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ข้อมูลนักเรียน</title>
+  <link rel="stylesheet" href="student-detail.css">
+  <script defer src="student-detail.js"></script>
+</head>
+<body>
+  <div class="content-wrapper">
+    <header class="top-bar">
+      <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo">
+      <h1>โรงเรียนอนุบาลกุลจินต์</h1>
+      <button id="sidebarCollapse" class="toggle-btn">
+        <span class="toggle-icon">&#9776;</span>
+      </button>
+    </header>
+    
+    <div class="main-container">
+      <nav class="side-nav collapsed" id="sidebar">
+        <div class="sidebar-header">
+          <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="sidebar-logo">
+        </div>
+        <ul>
+          <li class="section">
+            <h3>ข้อมูลทั่วไป</h3>
+            <ul>
+              <li><a href="Admin.html">หน้าหลัก</a></li>
+              <li><a href="#general-info">ประวัตินักเรียน</a></li>
+            </ul>
+          </li>
+
+          <li class="section">
+            <h3>พฤติกรรมและการรักษา</h3>
+            <ul>
+              <li><a href="#behavior">พฤติกรรมแรกเข้า</a></li>
+              <li><a href="#treatment">แนวทางการแก้ไข</a></li>
+              <li><a href="#doctor">แพทย์ที่ดูแล</a></li>
+              <li><a href="#medication">ยาที่รับประทาน</a></li>
+            </ul>
+          </li>
+
+          <li class="section">
+            <h3>การติดตามและประเมินผล</h3>
+            <ul>
+              <li><a href="#">VDO</a></li>
+              <li><a href="#">กล้องวงจรปิด</a></li>
+              <li><a href="#">สรุปประเมินพัฒนาการ</a></li>
+            </ul>
+          </li>
+
+          <li class="section">
+            <h3>ตารางเวลา</h3>
+            <ul>
+              <li><a href="#">การนัดหมาย</a></li>
+              <li><a href="#">ตารางเรียนและผลการประเมิน</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <main>
+        <div id="studentDetail">
+          <!-- เนื้อหานักเรียนจะถูกเติมโดย student-detail.js -->
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

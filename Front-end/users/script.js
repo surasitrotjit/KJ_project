@@ -1,0 +1,444 @@
+// Toggle content sections
+function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+}
+
+// Function to add a newly uploaded item to the gallery
+function addItemToGallery(galleryId, data) {
+    const card = document.createElement('div');
+    card.className = 'activity-card';
+    card.innerHTML = `
+    <img src="${data.imagePath}" alt="รูปภาพ" class="activity-image">
+    <div class="activity-info">
+        ${data.name ? `<div><b>${data.name}</b></div>` : ""}
+        ${data.detail}
+    </div>
+    <a href="#" class="activity-btn">ดูเพิ่มเติม</a>
+`;
+    // ...existing code...
+    gallery.prepend(card);
+}
+
+// Handle form submission
+function handleSubmit(formId, uploadUrl, galleryId) {
+    const form = document.getElementById(formId);
+    const formData = new FormData(form);
+    const loadingIndicator = document.getElementById('uploadLoading');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex';
+    }
+    fetch(uploadUrl, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            alert('อัพโหลดสำเร็จ!');
+            form.reset();
+            if (galleryId) {
+                addItemToGallery(galleryId, data.data);
+            }
+        })
+        .catch(err => {
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            console.error('Error:', err);
+            alert('อัพโหลดไม่สำเร็จ! กรุณาลองใหม่อีกครั้ง');
+        });
+    return false;
+}
+
+// Auto assign submit handlers
+window.onload = () => {
+    const activityForm = document.getElementById('activityForm');
+    if (activityForm) {
+        activityForm.onsubmit = (event) => {
+            event.preventDefault();
+            handleSubmit('activityForm', 'http://localhost:3000/activities', 'activityGallery');
+        };
+    }
+    const awardForm = document.getElementById('awardForm');
+    if (awardForm) {
+        awardForm.onsubmit = (event) => {
+            event.preventDefault();
+            handleSubmit('awardForm', 'http://localhost:3000/awards', 'awardGallery');
+        };
+    }
+    const visitorForm = document.getElementById('visitorForm');
+    if (visitorForm) {
+        visitorForm.onsubmit = (event) => {
+            event.preventDefault();
+            handleSubmit('visitorForm', 'http://localhost:3000/upload/visitor', 'visitorGallery');
+        };
+    }
+};
+
+// ข่าวสาร: จัดการข่าว (เพิ่มข่าวใหม่ในหน้า)
+const newsForm = document.getElementById('newsForm');
+const newsList = document.getElementById('newsList');
+if (newsForm && newsList) {
+    newsForm.onsubmit = (e) => {
+        e.preventDefault();
+        const title = newsForm.title.value.trim();
+        const detail = newsForm.detail.value.trim();
+        if (!title || !detail) return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        const li = document.createElement('li');
+        li.textContent = `${title}: ${detail}`;
+        newsList.prepend(li);
+        newsForm.reset();
+    };
+}
+
+// นักเรียน: โหลดข้อมูลนักเรียนจาก JSON Server และแสดงแบบกลุ่มตามชั้นและครู
+document.addEventListener("DOMContentLoaded", () => {
+    const studentGroupsDiv = document.getElementById("studentGroups");
+
+    // กำหนดข้อมูลครูประจำชั้น (ตัวอย่าง)
+    const classTeachers = {
+        "อนุบาล 1": {
+            name: "นางสาวสุภาพร แก้วชูทอง",
+            img: "../users/imguser/Toon.png"
+        },
+        "อนุบาล 2": {
+            name: "นางสาวสิริวรรณ นาคศรี",
+            img: "../users/imguser/Oil.png"
+        },
+        "อนุบาล 3": {
+            name: "นางนุชรี กิตต์ธนาฒย์",
+            img: "../users/imguser/Ta.png"
+        },
+        "ป.1": {
+            name: "นายสมชาย ใจดี", // ตัวอย่างชื่อครู
+            img: "../users/imguser/TeacherP1.png"
+        },
+        "ป.2": {
+            name: "นางสาวพรทิพย์ สายใจ",
+            img: "../users/imguser/TeacherP2.png"
+        },
+        "ป.3": {
+            name: "นายประเสริฐ มั่นคง",
+            img: "../users/imguser/TeacherP3.png"
+        }
+        // เพิ่มชั้นเรียนและครูได้ตามต้องการ
+    };
+
+    function groupByClass(students) {
+        const groups = {};
+        students.forEach(stu => {
+            if (!groups[stu.class]) groups[stu.class] = [];
+            groups[stu.class].push(stu);
+        });
+        return groups;
+    }
+
+    function renderStudentGroups(students) {
+        const groups = groupByClass(students);
+        studentGroupsDiv.innerHTML = "";
+        if (!students.length) {
+            studentGroupsDiv.innerHTML = "<p>ไม่พบข้อมูลนักเรียน</p>";
+            return;
+        }
+        Object.keys(groups).forEach(className => {
+            const teacher = classTeachers[className] || {};
+            const studentsInClass = groups[className];
+
+            // กรองข้อมูลที่ไม่ครบ
+            const validStudents = studentsInClass.filter(stu =>
+                stu.studentId && stu.firstName && stu.lastName && stu.nickname && stu.class
+            );
+            if (!validStudents.length) return; // ข้ามถ้าไม่มีข้อมูล
+
+            // สร้างตาราง
+            const table = document.createElement("table");
+            table.className = "student-table";
+            table.border = "1";
+            table.cellPadding = "10";
+            table.innerHTML = `
+<thead>
+    <tr>
+        <th>รหัสนักเรียน</th>
+        <th>ชื่อ - สกุลนักเรียน<br>(ชื่อเล่น)</th>
+        <th>การจัดการ</th>
+        <th>ครูประจำชั้น</th>
+    </tr>
+</thead>
+<tbody>
+    ${validStudents.map((stu, idx) => `
+        <tr>
+            <td>${stu.studentId || "-"}</td>
+            <td>
+              ${stu.firstName || "-"} ${stu.lastName || "-"}
+              <span class="nickname">(${stu.nickname || "-"})</span>
+            </td>
+            <td>
+                <button class="action-btn edit" data-id="${stu.id}">
+                  <span class="icon">🖊️</span>แก้ไข
+                </button>
+                <button class="action-btn delete" data-id="${stu.id}">
+                  <span class="icon">🗑️</span>ลบ
+                </button>
+                <button class="action-btn view" onclick="window.location.href='student-detail.html?id=${stu.id}'">
+                  <span class="icon">🔍</span>ดูข้อมูลเพิ่ม
+                </button>
+            </td>
+            ${idx === 0 ? `
+                <td rowspan="${validStudents.length}" style="text-align:center;">
+                    <img src="${teacher.img || "#"}" alt="ครูประจำชั้น" width="80"><br>
+                    ${teacher.name || "-"}<br>(ครูประจำชั้น)
+                </td>
+            ` : ""}
+        </tr>
+    `).join("")}
+</tbody>
+`;
+            // ชื่อกลุ่ม
+            const groupTitle = document.createElement("h3");
+            groupTitle.textContent = className;
+            // ใส่ลง div
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "student-group";
+            groupDiv.appendChild(groupTitle);
+            groupDiv.appendChild(table);
+            studentGroupsDiv.appendChild(groupDiv);
+        });
+    }
+
+    function loadStudents() {
+        fetch("http://localhost:3000/students")
+            .then(res => {
+                if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลนักเรียนได้: " + res.status);
+                return res.json();
+            })
+            .then(data => renderStudentGroups(data.students))
+            .catch(err => {
+                studentGroupsDiv.innerHTML = "<p>เกิดข้อผิดพลาดในการโหลดข้อมูลนักเรียน</p>";
+                console.error("Student fetch error:", err);
+            });
+    }
+
+    loadStudents();
+
+    // เพิ่มนักเรียนใหม่
+    document.getElementById("addStudentForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const studentId = document.getElementById("studentId").value.trim();
+        const firstName = document.getElementById("studentFirstName").value.trim();
+        const lastName = document.getElementById("studentLastName").value.trim();
+        const nickname = document.getElementById("studentNickname").value.trim();
+        const studentClass = document.getElementById("studentClass").value;
+        if (!studentId || !firstName || !lastName || !nickname || !studentClass) {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+            return;
+        }
+        const studentData = {
+            studentId,
+            firstName,
+            lastName,
+            nickname,
+            class: studentClass,
+        };
+        fetch("http://localhost:3000/students", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(studentData),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("ไม่สามารถบันทึกข้อมูลได้");
+                }
+                return response.json();
+            })
+            .then(() => {
+                alert("บันทึกข้อมูลสำเร็จ!");
+                loadStudents();
+                event.target.reset();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+            });
+    });
+
+    // ลบข้อมูลนักเรียน
+    studentGroupsDiv.addEventListener("click", (event) => {
+        if (event.target.classList.contains("action-btn") && event.target.classList.contains("delete")) {
+            const studentId = event.target.getAttribute("data-id");
+            if (!confirm("คุณต้องการลบข้อมูลนักเรียนนี้ใช่หรือไม่?")) return;
+            fetch(`http://localhost:3000/students/${studentId}`, {
+                method: "DELETE",
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("ไม่สามารถลบข้อมูลได้");
+                    }
+                    alert("ลบข้อมูลสำเร็จ!");
+                    loadStudents();
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+                });
+        }
+    });
+
+    // ฟังก์ชันแสดง modal แก้ไข
+    function showEditModal(student) {
+        document.getElementById("editStudentId").value = student.id;
+        document.getElementById("editStudentIdInput").value = student.studentId || "";
+        document.getElementById("editStudentFirstName").value = student.firstName;
+        document.getElementById("editStudentLastName").value = student.lastName;
+        document.getElementById("editStudentNickname").value = student.nickname || "";
+        document.getElementById("editStudentClass").value = student.class;
+        document.getElementById("editStudentModal").style.display = "block";
+    }
+
+    // ปิด modal
+    document.getElementById("closeEditModal").onclick = function () {
+        document.getElementById("editStudentModal").style.display = "none";
+    };
+
+    // ปิด modal เมื่อคลิกนอกกล่อง
+    window.onclick = function (event) {
+        const modal = document.getElementById("editStudentModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    // เมื่อกดปุ่ม "แก้ไข"
+    studentGroupsDiv.addEventListener("click", (event) => {
+        if (event.target.classList.contains("action-btn") && event.target.classList.contains("edit")) {
+            const studentId = event.target.getAttribute("data-id");
+            fetch(`http://localhost:3000/students/${studentId}`)
+                .then((response) => {
+                    if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลนักเรียนได้");
+                    return response.json();
+                })
+                .then((student) => {
+                    showEditModal(student);
+                })
+                .catch(() => {
+                    alert("เกิดข้อผิดพลาดในการโหลดข้อมูลสำหรับแก้ไข");
+                });
+        }
+    });
+
+    // เมื่อ submit ฟอร์มแก้ไข
+    document.getElementById("editStudentForm").onsubmit = function (e) {
+        e.preventDefault();
+        const id = document.getElementById("editStudentId").value;
+        const updatedStudent = {
+            studentId: document.getElementById("editStudentIdInput").value.trim(),
+            firstName: document.getElementById("editStudentFirstName").value.trim(),
+            lastName: document.getElementById("editStudentLastName").value.trim(),
+            nickname: document.getElementById("editStudentNickname").value.trim(),
+            class: document.getElementById("editStudentClass").value,
+        };
+        fetch(`http://localhost:3000/students/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedStudent),
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error("ไม่สามารถแก้ไขข้อมูลได้");
+                return response.json();
+            })
+            .then(() => {
+                alert("แก้ไขข้อมูลสำเร็จ!");
+                document.getElementById("editStudentModal").style.display = "none";
+                loadStudents();
+            })
+            .catch(() => {
+                alert("เกิดข้อผิดพลาดในการแก้ไขข้อมูล");
+            });
+    };
+
+    // โหลดข้อมูลล่าสุดเมื่อโหลดหน้าเว็บ (กิจกรรม/รางวัล/ผู้มาเยี่ยมชม)
+    function loadLatestItems(endpoint, galleryId) {
+        fetch(`${endpoint}?_sort=id&_order=desc&_limit=3`)
+            .then(response => {
+                if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลได้");
+                return response.json();
+            })
+            .then(items => {
+                items.forEach(item => {
+                    addItemToGallery(galleryId, item);
+                });
+            })
+            .catch(err => {
+                console.error(`เกิดข้อผิดพลาดในการโหลดข้อมูลจาก ${galleryId}:`, err);
+            });
+    }
+
+    loadLatestItems('http://localhost:3000/activity', 'activityGallery');
+    loadLatestItems('http://localhost:3000/award', 'awardGallery');
+    loadLatestItems('http://localhost:3000/visitor', 'visitorGallery');
+});
+
+// นักเรียน: แสดงตารางนักเรียน (แบบสรุป)
+async function renderStudentTableSimple() {
+    const container = document.getElementById('studentTableContainer');
+    if (!container) return;
+    try {
+        const res = await fetch('students.json');
+        const data = await res.json();
+        const students = Array.isArray(data) ? data : data.students || [];
+        // กรองเฉพาะที่มีข้อมูลสำคัญ
+        const validStudents = students.filter(s => s.studentId && s.firstName && s.lastName && s.class);
+        if (!validStudents.length) {
+            container.innerHTML = "<p>ไม่พบข้อมูลนักเรียน</p>";
+            return;
+        }
+        // เรียงตามลำดับชั้นที่ต้องการ
+        const classOrder = ["อนุบาล 1", "อนุบาล 2", "อนุบาล 3", "ป.1", "ป.2", "ป.3"];
+        validStudents.sort((a, b) => {
+            const idxA = classOrder.indexOf(a.class);
+            const idxB = classOrder.indexOf(b.class);
+            if (idxA === -1 && idxB === -1) return (a.class || '').localeCompare(b.class || '', 'th');
+            if (idxA === -1) return 1;
+            if (idxB === -1) return -1;
+            return idxA - idxB;
+        });
+        let html = `
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th>รหัสนักเรียน</th>
+            <th>ชื่อ - สกุล</th>
+            <th>ระดับชั้น</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${validStudents.map(s => `
+            <tr>
+              <td>${s.studentId}</td>
+              <td>${s.firstName} ${s.lastName}</td>
+              <td>${s.class}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = '<p style="color:red;">ไม่สามารถโหลดข้อมูลนักเรียนได้</p>';
+    }
+}
+// เรียกใช้เมื่อโหลดหน้า
+window.addEventListener('DOMContentLoaded', function () {
+    renderStudentTableSimple();
+});

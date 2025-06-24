@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ประวัติโรงเรียน</title>
+  <link rel="stylesheet" href="main.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="sidebar-btn" id="sidebarBtn">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="logo-container-sidebar">
+      <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์ Logo" class="sidebar-logo">
+      <div class="close-btn" id="closeSidebarBtn">&times;</div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a href="main.html" class="menu-item"><i class="fas fa-home"></i><span>หน้าหลัก</span></a>
+      <a href="history.html" class="menu-item"><i class="fas fa-id-card"></i><span>ประวัติโรงเรียน</span></a>
+      <a href="award.html" class="menu-item"><i class="fas fa-award"></i><span>รางวัลความภาคภูมิใจ</span></a>
+      <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
+      <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
+      <a href="Activity.html" class="menu-item"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
+      <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item"><i class="fas fa-comments"></i><span>ถาม-ตอบ</span></a>
+      <a href="news.html" class="menu-item"><i class="fas fa-book-open"></i><span>ข่าวสารทั่วไป</span></a>
+      <a href="contact.html" class="menu-item"><i class="fas fa-phone"></i><span>ติดต่อ</span></a>
+    </nav>
+  </div>
+
+  <div class="main-container">
+    <header>
+      <div class="logo-container">
+        <div class="logo">
+          <img src="../Image/logo.png" alt="โลโก้">
+        </div>
+        <div>
+          <div class="school-name">โรงเรียนอนุบาลกุลจินต์</div>
+          <div class="school-name-en">Kunlajin Kindergarten</div>
+        </div>
+      </div>
+      <div class="hamburger" id="hamburgerBtn">
+        <i class="fas fa-bars"></i>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="hero-text">
+        ยินดีต้อนรับสู่เว็บไซต์<br>โรงเรียนอนุบาลกุลจินต์
+      </div>
+      <div class="motto-banner">
+        "พัฒนาการดี มีคุณธรรม พร้อมนำชุมชน"
+      </div>
+    </div>
+
+    <div class="main-contents">
+      <div class="visitors-section">
+        <div class="announcement-header">
+          <div class="bell-icon">🔔</div>
+          <div>ผู้มาเยี่ยมชม</div>
+        </div>
+      
+        <div class="logo-center">
+          <img src="../Image/logo.png" alt="โลโก้">
+        </div>
+      
+        <div class="visitors-gallery">
+          <!-- ตัวอย่าง visitors-item -->
+          <div class="visitors-item"
+            data-title="ผู้มาเยี่ยมชม"
+            data-desc="สำนักงานส่งเสริมการศึกษานอกระบบและการศึกษาตามอัธยาศัยจังหวัดสงขลา (กศน.สงขลา) เยี่ยมการจัดการเรียนร่วมโรงเรียนอนุบาลกุลจินต์ วันที่ 8 พฤศจิกายน วันที่ 1 ธันวาคม และ วันที่ 8 ธันวาคม 2559"
+            data-images="../Image/logo.png,../Image/logo2.png,../Image/logo3.png">
+            <img class="visitors-img" src="../Image/logo.png" alt="รูปโลโก้" onclick="openPopup(this)" />
+            <div class="visitors-text">
+              สำนักงานส่งเสริมการศึกษานอกระบบและการศึกษาตามอัธยาศัยจังหวัดสงขลา (กศน.สงขลา) เยี่ยมการจัดการเรียนร่วมโรงเรียนอนุบาลกุลจินต์ วันที่ 8 พฤศจิกายน วันที่ 1 ธันวาคม และ วันที่ 8 ธันวาคม 2559
+            </div>
+          </div>
+      
+          <!-- ✅ visitors-item ว่าง สำหรับกรอกข้อมูลและอัปโหลดรูป
+          <div class="visitors-item visitors-item-form">
+            <form action="#" method="POST" enctype="multipart/form-data">
+              <label for="visitor-title">ชื่อผู้เยี่ยมชม:</label>
+              <input type="text" id="visitor-title" name="visitor-title" placeholder="กรอกชื่อผู้เยี่ยมชม" required>
+      
+              <label for="visitor-desc">รายละเอียด:</label>
+              <textarea id="visitor-desc" name="visitor-desc" rows="4" placeholder="กรอกรายละเอียด" required></textarea>
+      
+              <label for="visitor-images">อัปโหลดรูปภาพ:</label>
+              <input type="file" id="visitor-images" name="visitor-images" accept="image/*" multiple required>
+      
+              <button type="submit">เพิ่มข้อมูลผู้เยี่ยมชม</button>
+            </form>
+          </div> -->
+        </div>
+      
+        <!-- ✅ Footer อยู่ภายใน visitors-section -->
+        <footer>
+          <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
+          <div class="school-address">1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110</div>
+          <div class="school-contact">Tel. : 074-257884, Fax : 074-258107, E-mail : Kunlajin@gmail.com</div>
+        </footer>
+      </div>
+      
+      <!-- ✅ Popup แสดงเนื้อหา -->
+      <div id="popup" class="popup-overlay-popup" onclick="closePopup(event)">
+        <div class="popup-content-popup">
+          <span class="close-btn-popup" onclick="closePopup(event)">&times;</span>
+          <div class="visitors-text" id="popupText" style="text-align: center; margin-bottom: 20px;"></div>
+          <div class="popup-gallery" id="popupGallery"></div>
+        </div>
+      </div>
+      
+      <!-- ✅ Popup แสดงรูปใหญ่ -->
+      <div id="fullImagePopup" class="popup-overlay-popup" onclick="closeFullImage(event)" style="display:none;">
+        <div class="popup-content-full">
+          <span class="close-btn-popup" onclick="closeFullImage(event)">&times;</span>
+          <img id="fullImage" src="" alt="รูปขยาย" class="full-img">
+        </div>
+      </div>
+      
+      <!-- ✅ JavaScript -->
+      <script>
+        // ===== Sidebar Functions =====
+        const sidebarBtn = document.getElementById('sidebarBtn');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+      
+        function openSidebar() {
+          sidebar.classList.add('active');
+          overlay.style.display = 'block';
+        }
+      
+        function closeSidebar() {
+          sidebar.classList.remove('active');
+          overlay.style.display = 'none';
+        }
+      
+        sidebarBtn?.addEventListener('click', openSidebar);
+        hamburgerBtn?.addEventListener('click', openSidebar);
+        closeSidebarBtn?.addEventListener('click', closeSidebar);
+        overlay?.addEventListener('click', closeSidebar);
+      
+        window.addEventListener('scroll', function () {
+          const header = document.querySelector('header');
+          if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        });
+      
+        // ===== Visitors Popup Functions =====
+        function openPopup(clickedImg) {
+          const parentItem = clickedImg.closest('.visitors-item');
+          const desc = parentItem.getAttribute('data-desc') || '';
+          const imagesStr = parentItem.getAttribute('data-images') || '';
+          const imagePaths = imagesStr.split(',');
+      
+          document.getElementById('popupText').textContent = desc;
+      
+          const gallery = document.getElementById('popupGallery');
+          gallery.innerHTML = ''; // Clear previous images
+      
+          imagePaths.forEach((src) => {
+            const img = document.createElement('img');
+            img.src = src.trim();
+            img.className = 'popup-img';
+            img.onclick = () => openFullImage(src.trim());
+            gallery.appendChild(img);
+          });
+      
+          document.getElementById('popup').style.display = 'flex';
+        }
+      
+        function closePopup(event) {
+          if (event.target.classList.contains('popup-overlay-popup') || event.target.classList.contains('close-btn-popup')) {
+            document.getElementById('popup').style.display = 'none';
+          }
+        }
+      
+        function openFullImage(src) {
+          document.getElementById('fullImage').src = src;
+          document.getElementById('fullImagePopup').style.display = 'flex';
+        }
+      
+        function closeFullImage(event) {
+          if (event.target.classList.contains('popup-overlay-popup') || event.target.classList.contains('close-btn-popup')) {
+            document.getElementById('fullImagePopup').style.display = 'none';
+          }
+        }
+      </script>
+      
+</body>
+</html>
