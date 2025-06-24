@@ -153,18 +153,29 @@
       <section id="editSchedule" class="content-section hidden">
         <h2>แก้ไขตารางเรียน</h2>
         <label>เลือกชั้นเรียน:
-          <select id="editScheduleClassSelect" required
-            style="padding:8px 12px; border-radius:6px; border:1.5px solid #4a90e2; background:#f8fbff; font-size:1rem; color:#333; box-shadow:0 1px 4px rgba(74,144,226,0.08); transition:border 0.2s;">
+          <select id="editScheduleClassSelect" required>
             <option value="" disabled selected hidden>เลือกชั้นเรียน</option>
             <option value="อนุบาล 1">🧒🏻 อนุบาล 1</option>
             <option value="อนุบาล 2">🧒🏼 อนุบาล 2</option>
             <option value="อนุบาล 3">🧒🏽 อนุบาล 3</option>
-            <option value="ป.1/1">📘 ป.1</option>
-            <option value="ป.2/1">📗 ป.2</option>
-            <option value="ป.3/1">📙 ป.3</option>
+            <option value="ป.1/1">📘 ป.1/1</option>
+            <option value="ป.2/1">📗 ป.2/1</option>
+            <option value="ป.3/1">📙 ป.3/1</option>
           </select>
         </label>
+        <label>เลือกวัน:
+          <select id="editScheduleDaySelect" required>
+            <option value="" disabled selected hidden>เลือกวัน</option>
+            <option value="จันทร์">จันทร์</option>
+            <option value="อังคาร">อังคาร</option>
+            <option value="พุธ">พุธ</option>
+            <option value="พฤหัสบดี">พฤหัสบดี</option>
+            <option value="ศุกร์">ศุกร์</option>
+          </select>
+        </label>
+        <button id="showScheduleTableBtn" type="button">ดูตารางเรียน</button>
         <div id="editScheduleFormContainer"></div>
+        <div id="scheduleTableContainer" style="margin-top:24px;"></div>
       </section>
 
       <!-- Modal แก้ไขนักเรียน -->
@@ -197,99 +208,6 @@
       </div>
     </main>
   </div>
-  <script>
-    // เมื่อโหลดหน้าเสร็จ ให้แสดงหน้า "ตารางรายชื่อนักเรียน"
-    window.addEventListener('DOMContentLoaded', function () {
-      showSection('studentTableSection');
-    });
-  </script>
-  <script>
-    const scheduleDays = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
-    const schedulePeriods = [
-      "8:30-9:30", "9:30-10:30", "10:30-11:30", "11:30-12:30",
-      "12:30-13:30", "13:30-14:30", "14:30-15:30", "15:30-16:30"
-    ];
-
-    // โหลดข้อมูลตารางเรียนจาก backend
-    async function loadSchedule() {
-      const res = await fetch('http://localhost:3000/schedule');
-      return await res.json();
-    }
-
-    // บันทึกข้อมูลตารางเรียนไป backend
-    async function saveSchedule(schedule) {
-      await fetch('http://localhost:3000/schedule', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(schedule)
-      });
-    }
-
-    // แสดงฟอร์มแก้ไขตารางเรียน
-    function renderEditScheduleForm(scheduleData, className) {
-      const formDiv = document.getElementById('editScheduleFormContainer');
-      let html = `<form id="editScheduleForm"><table class="schedule-table">
-    <thead>
-      <tr>
-        <th>เวลา</th>
-        ${scheduleDays.map(d => `<th>${d}</th>`).join('')}
-      </tr>
-    </thead>
-    <tbody>`;
-      schedulePeriods.forEach((period, i) => {
-        html += `<tr><td>${period}</td>`;
-        scheduleDays.forEach(day => {
-          const val = (scheduleData[className] && scheduleData[className][day] && scheduleData[className][day][i]) || '';
-          html += `<td><input type="text" name="${day}_${i}" value="${val}" style="width:90px"></td>`;
-        });
-        html += `</tr>`;
-      });
-      html += `</tbody></table>
-    <button type="submit">บันทึกตารางเรียน</button>
-  </form>`;
-      formDiv.innerHTML = html;
-
-      document.getElementById('editScheduleForm').onsubmit = async function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        if (!scheduleData[className]) scheduleData[className] = {};
-        scheduleDays.forEach(day => {
-          scheduleData[className][day] = [];
-          schedulePeriods.forEach((_, i) => {
-            scheduleData[className][day][i] = formData.get(`${day}_${i}`) || '';
-          });
-        });
-        await saveSchedule(scheduleData);
-        alert('บันทึกตารางเรียนสำเร็จ');
-      };
-    }
-
-    // โหลดและแสดงฟอร์มแก้ไขตารางเรียน
-    async function loadEditSchedule() {
-      let scheduleData = await loadSchedule();
-      const select = document.getElementById('editScheduleClassSelect');
-      function updateForm() {
-        if (select.value) {
-          renderEditScheduleForm(scheduleData, select.value);
-        } else {
-          document.getElementById('editScheduleFormContainer').innerHTML = '';
-        }
-      }
-      select.onchange = updateForm;
-      updateForm();
-    }
-
-    // เรียกเมื่อเปิด section editSchedule
-    const _oldShowSection = window.showSection;
-    window.showSection = function (sectionId) {
-      document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.add('hidden');
-      });
-      document.getElementById(sectionId).classList.remove('hidden');
-      if (sectionId === 'editSchedule') loadEditSchedule();
-      if (_oldShowSection) _oldShowSection(sectionId);
-    };
-  </script>
 </body>
 
 </html>

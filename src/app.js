@@ -3,9 +3,13 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const schedulePath = path.join(__dirname, '../Back-end/data/schedule.json');
 const PORT = 3000;
 
+// กำหนด path สำหรับไฟล์ข้อมูล
+const scheduleFile = path.join(__dirname, '../Front-end/users/schedule.json');
+const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
+
+// Middleware
 app.use(express.json());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -84,14 +88,14 @@ app.post('/awards', uploadAward.single('image'), (req, res) => {
 
 // ----------------- นักเรียน (Students) -----------------
 app.get('/students', (req, res) => {
-  fs.readFile(path.join(__dirname, '../Front-end/users/students.json'), (err, data) => {
+  fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
     res.json(JSON.parse(data)); // ต้อง return เป็น { students: [...] }
   });
 });
 
 app.get('/students/:id', (req, res) => {
-  fs.readFile(path.join(__dirname, '../Front-end/users/students.json'), (err, data) => {
+  fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
     const students = JSON.parse(data).students || [];
     const student = students.find(s => s.id === req.params.id);
@@ -101,7 +105,6 @@ app.get('/students/:id', (req, res) => {
 });
 
 app.put('/students/:id', (req, res) => {
-  const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
     let students = JSON.parse(data).students || [];
@@ -116,7 +119,6 @@ app.put('/students/:id', (req, res) => {
 });
 
 app.delete('/students/:id', (req, res) => {
-  const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
     let students = JSON.parse(data).students || [];
@@ -130,7 +132,6 @@ app.delete('/students/:id', (req, res) => {
 });
 
 app.post('/students', (req, res) => {
-  const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
     let students = [];
@@ -159,6 +160,39 @@ app.post('/students', (req, res) => {
     fs.writeFile(studentsPath, JSON.stringify({ students }, null, 2), (err) => {
       if (err) return res.status(500).send('Error saving students.json');
       res.json({ message: 'เพิ่มข้อมูลนักเรียนสำเร็จ', student: newStudent });
+    });
+  });
+});
+
+// ----------------- ตารางเรียน (Schedule) -----------------
+
+// GET ตารางเรียน
+app.get('/schedule', (req, res) => {
+  fs.readFile(scheduleFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ schedule ไม่ได้' });
+    try {
+      const json = JSON.parse(data);
+      res.json(json.schedule);
+    } catch (e) {
+      res.status(500).json({ error: 'ไฟล์ schedule.json ไม่ถูกต้อง' });
+    }
+  });
+});
+
+// PUT อัปเดตตารางเรียน
+app.put('/schedule', (req, res) => {
+  fs.readFile(scheduleFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ schedule ไม่ได้' });
+    let json;
+    try {
+      json = JSON.parse(data);
+    } catch (e) {
+      json = { schedule: {} };
+    }
+    json.schedule = req.body;
+    fs.writeFile(scheduleFile, JSON.stringify(json, null, 2), err2 => {
+      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ schedule ไม่ได้' });
+      res.json({ success: true });
     });
   });
 });
