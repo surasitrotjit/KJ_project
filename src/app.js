@@ -8,6 +8,7 @@ const PORT = 3000;
 // กำหนด path สำหรับไฟล์ข้อมูล
 const scheduleFile = path.join(__dirname, '../Front-end/users/schedule.json');
 const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
+const activitiesFile = path.join(__dirname, '../Back-end/data/activities.json');
 
 // Middleware
 app.use(express.json());
@@ -32,25 +33,60 @@ const activityStorage = multer.diskStorage({
 });
 const uploadActivity = multer({ storage: activityStorage });
 
+// GET กิจกรรมทั้งหมด
 app.get('/activities', (req, res) => {
-  fs.readFile(path.join(__dirname, '../Back-end/data/activities.json'), (err, data) => {
+  fs.readFile(activitiesFile, (err, data) => {
     if (err) return res.status(500).send('Error reading activities.json');
     res.json(JSON.parse(data));
   });
 });
 
+// POST เพิ่มกิจกรรม
+// POST เพิ่มกิจกรรม
 app.post('/activities', uploadActivity.single('image'), (req, res) => {
   const { detail } = req.body;
   const imagePath = '/uploads/activity/' + req.file.filename;
-  const dataPath = path.join(__dirname, '../Back-end/data/activities.json');
   let activities = [];
-  if (fs.existsSync(dataPath)) {
-    activities = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  if (fs.existsSync(activitiesFile)) {
+    activities = JSON.parse(fs.readFileSync(activitiesFile, 'utf8'));
   }
-  const newItem = { detail, imagePath };
+  // สร้าง id ใหม่ (เพิ่มตรงนี้)
+  let newId;
+  do {
+    newId = Date.now().toString() + Math.floor(Math.random() * 1000);
+  } while (activities.some(a => a.id === newId));
+  const newItem = { id: newId, detail, imagePath };
   activities.push(newItem);
-  fs.writeFileSync(dataPath, JSON.stringify(activities, null, 2));
+  fs.writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
   res.json({ data: newItem });
+});
+
+// PUT แก้ไขกิจกรรม
+app.put('/activities/:id', (req, res) => {
+  fs.readFile(activitiesFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
+    let arr = JSON.parse(data);
+    const idx = arr.findIndex(a => a.id == req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
+    arr[idx] = { ...arr[idx], ...req.body, id: arr[idx].id };
+    fs.writeFile(activitiesFile, JSON.stringify(arr, null, 2), err2 => {
+      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
+      res.json({ success: true });
+    });
+  });
+});
+
+// DELETE กิจกรรม
+app.delete('/activities/:id', (req, res) => {
+  fs.readFile(activitiesFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
+    let arr = JSON.parse(data);
+    arr = arr.filter(a => a.id !== req.params.id);
+    fs.writeFile(activitiesFile, JSON.stringify(arr, null, 2), err2 => {
+      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
+      res.json({ success: true });
+    });
+  });
 });
 
 // ----------------- รางวัล (Award) -----------------
@@ -190,13 +226,13 @@ app.put('/schedule', (req, res) => {
       json = { schedule: {} };
     }
     json.schedule = req.body;
-    fs.writeFile(scheduleFile, JSON.stringify(json, null, 2), err2 => {
-      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ schedule ไม่ได้' });
-      res.json({ success: true });
+    fs.writeFile(scheduleFile, JSON.stringify(json, null, 2), (err) => {
+      if (err) return res.status(500).json({ error: 'บันทึกไฟล์ schedule ไม่ได้' });
+      res.json({ message: 'อัปเดตตารางเรียนสำเร็จ' });
     });
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

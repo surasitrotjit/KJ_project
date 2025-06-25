@@ -46,14 +46,26 @@
       <!-- กิจกรรม -->
       <section id="activity" class="content-section hidden">
         <h2>เพิ่มกิจกรรม</h2>
-        <form id="activityForm" enctype="multipart/form-data">
-          <label>เลือกรูปภาพกิจกรรม:</label>
-          <input type="file" name="image" required />
-          <label>รายละเอียดกิจกรรม:</label>
-          <textarea name="detail" required></textarea>
-          <button type="submit">บันทึก</button>
+        <form id="activityForm" enctype="multipart/form-data" style="margin-bottom:20px;">
+          <label>รายละเอียดกิจกรรม:<br>
+            <textarea name="detail" required rows="3" style="width:100%;"></textarea>
+          </label><br>
+          <label>เลือกรูปภาพกิจกรรม:<br>
+            <input type="file" name="image" accept="image/*" required>
+          </label><br>
+          <button type="submit">เพิ่มกิจกรรม</button>
+          <span id="uploadLoading" style="display:none;">กำลังอัพโหลด...</span>
         </form>
-        <div id="activityGallery" class="gallery"></div>
+        <h3>กิจกรรมทั้งหมด</h3>
+        <div id="activityGallery"></div>
+        <div id="activityModal" class="modal" style="display:none;">
+          <div class="modal-content">
+            <span id="closeActivityModal" class="close">&times;</span>
+            <img id="activityModalImg" src="" alt="activity" style="max-width:100%;margin-bottom:12px;">
+            <div id="activityModalDetail"></div>
+            <div id="activityModalActions"></div> <!-- สำหรับปุ่มแก้ไข/ลบ -->
+          </div>
+        </div>
       </section>
 
       <!-- รางวัล -->

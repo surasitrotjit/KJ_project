@@ -390,7 +390,6 @@ ul li {
   vertical-align: middle;
 }
 
-
 .action-btn.edit {
   background: linear-gradient(90deg, #74c0fc 80%, #b2d8f7 100%);
   color: #22577a;
@@ -422,4 +421,60 @@ ul li {
   background: linear-gradient(90deg, #ffd1dc 80%, #b2d8f7 100%);
   color: #ff6f91;
   transform: translateY(-2px) scale(1.04);
+}
+
+/* Activity Card Admin Section */
+#activityGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.activity-card-admin {
+  width: 320px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #0001;
+  margin: 12px 0;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.activity-img-admin {
+  width: 100%;
+  max-width: 288px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+.activity-detail-admin {
+  margin-bottom: 12px;
+  font-size: 1.05em;
+  color: #222;
+}
+.activity-actions-admin {
+  margin-top: 8px;
+}
+.activity-actions-admin button {
+  margin: 0 4px 0 0;
+  padding: 6px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #eee;
+  color: #333;
+  cursor: pointer;
+  font-size: 1em;
+}
+.activity-actions-admin .view-btn-admin {
+  background: #43b047;
+  color: #fff;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.activity-actions-admin .view-btn-admin:hover {
+  background: #388e3c;
 }

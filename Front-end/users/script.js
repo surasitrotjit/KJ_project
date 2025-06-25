@@ -1,21 +1,22 @@
-// Toggle content sections
-function showSection(sectionId) {
+// Toggle content sections และจำ section ล่าสุด
+window.showSection = function (sectionId) {
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.add('hidden');
     });
     document.getElementById(sectionId).classList.remove('hidden');
-    // เพิ่มบรรทัดนี้
     localStorage.setItem('lastSection', sectionId);
-}
+    if (sectionId === 'activity') renderActivityGallery();
+    if (sectionId === 'editSchedule') loadEditSchedule();
+    if (sectionId === 'schedule') loadScheduleSection();
+};
 
 // Function to add a newly uploaded item to the gallery
 function addItemToGallery(galleryId, data) {
-    const gallery = document.getElementById(galleryId);
-    if (!gallery) return;
+    if (!data || !data.imagePath || !data.detail) return;
     const card = document.createElement('div');
     card.className = 'activity-card';
     card.innerHTML = `
-    <img src="${data.imagePath}" alt="รูปภาพ" class="activity-image">
+    <img src="http://localhost:3000${data.imagePath}" alt="รูปภาพ" class="activity-image">
     <div class="activity-info">
         ${data.name ? `<div><b>${data.name}</b></div>` : ""}
         ${data.detail}
@@ -49,7 +50,9 @@ function handleSubmit(formId, uploadUrl, galleryId) {
             }
             alert('อัพโหลดสำเร็จ!');
             form.reset();
-            if (galleryId) {
+            if (galleryId === 'activityGallery') {
+                renderActivityGallery();
+            } else if (galleryId) {
                 addItemToGallery(galleryId, data.data);
             }
         })
@@ -63,6 +66,79 @@ function handleSubmit(formId, uploadUrl, galleryId) {
     return false;
 }
 
+// โหลดกิจกรรมทั้งหมด
+async function loadActivities() {
+    const res = await fetch('http://localhost:3000/activities');
+    return await res.json();
+}
+
+// แสดงกิจกรรมทั้งหมด
+async function renderActivityGallery() {
+    const gallery = document.getElementById('activityGallery');
+    const activities = await loadActivities();
+    gallery.innerHTML = '';
+    activities
+        .filter(act => act && act.imagePath && act.detail)
+        .forEach(act => {
+            gallery.innerHTML += `
+            <div class="activity-card-admin">
+                <img src="http://localhost:3000${act.imagePath}" alt="activity" class="activity-img-admin" onclick="showActivityDetail('${act.id}')">
+                <div class="activity-detail-admin">${act.detail.replace(/\r?\n/g, '<br>')}</div>
+                <div class="activity-actions-admin">
+                    <button onclick="editActivity('${act.id}')">แก้ไข</button>
+                    <button onclick="deleteActivity('${act.id}')">ลบ</button>
+                </div>
+            </div>
+        `;
+        });
+}
+
+// ลบกิจกรรม
+async function deleteActivity(id) {
+    if (!confirm('ยืนยันการลบกิจกรรมนี้?')) return;
+    await fetch(`http://localhost:3000/activities/${id}`, { method: 'DELETE' });
+    renderActivityGallery();
+}
+
+// แก้ไขกิจกรรม (ตัวอย่าง: เปิด prompt ให้แก้ไข detail)
+async function editActivity(id) {
+    const activities = await loadActivities();
+    const act = activities.find(a => a.id === id);
+    if (!act) return;
+    const newDetail = prompt('แก้ไขรายละเอียดกิจกรรม', act.detail);
+    if (newDetail !== null) {
+        act.detail = newDetail;
+        await fetch(`http://localhost:3000/activities/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(act)
+        });
+        renderActivityGallery();
+    }
+}
+async function showActivityDetail(id) {
+    const activities = await loadActivities();
+    const act = activities.find(a => a.id == id); // ใช้ == เผื่อ id เป็น string/number
+    if (!act) return;
+    document.getElementById('activityModalImg').src = `http://localhost:3000${act.imagePath}`;
+    document.getElementById('activityModalDetail').innerHTML = act.detail.replace(/\r?\n/g, '<br>');
+    // สร้างปุ่มแก้ไข/ลบใน modal
+    document.getElementById('activityModalActions').innerHTML = `
+      <button onclick="editActivity('${act.id}')">แก้ไข</button>
+      <button onclick="deleteActivity('${act.id}')">ลบ</button>
+    `;
+    document.getElementById('activityModal').style.display = 'block';
+}
+
+document.getElementById('closeActivityModal').onclick = function () {
+    document.getElementById('activityModal').style.display = 'none';
+};
+window.onclick = function (event) {
+    const modal = document.getElementById('activityModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+};
 // Auto assign submit handlers
 window.onload = () => {
     const activityForm = document.getElementById('activityForm');
@@ -386,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    loadLatestItems('http://localhost:3000/activity', 'activityGallery');
+    loadLatestItems('http://localhost:3000/activities', 'activityGallery');
     loadLatestItems('http://localhost:3000/award', 'awardGallery');
     loadLatestItems('http://localhost:3000/visitor', 'visitorGallery');
 });
@@ -440,17 +516,14 @@ async function renderStudentTableSimple() {
         container.innerHTML = '<p style="color:red;">ไม่สามารถโหลดข้อมูลนักเรียนได้</p>';
     }
 }
+
 // เรียกใช้เมื่อโหลดหน้า
 window.addEventListener('DOMContentLoaded', function () {
     renderStudentTableSimple();
-    // เพิ่มบรรทัดนี้
-    const lastSection = localStorage.getItem('lastSection') || 'studentTableSection';
-    showSection(lastSection);
+    // เพิ่มเติม: ให้แสดง section ตารางนักเรียนเป็นค่าเริ่มต้นถ้าไม่มี lastSection
+    const lastSection = localStorage.getItem('lastSection');
+    showSection(lastSection ? lastSection : 'studentTableSection');
 });
-// // เมื่อโหลดหน้าเสร็จ ให้แสดงหน้า "ตารางรายชื่อนักเรียน"
-// window.addEventListener('DOMContentLoaded', function () {
-//     showSection('studentTableSection');
-// });
 
 const scheduleDays = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
 const schedulePeriods = [
@@ -636,15 +709,3 @@ async function loadScheduleSection() {
         }
     };
 }
-
-// ปรับ showSection ให้รองรับทั้ง editSchedule และ schedule
-const _oldShowSection = window.showSection;
-window.showSection = function (sectionId) {
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.add('hidden');
-    });
-    document.getElementById(sectionId).classList.remove('hidden');
-    if (sectionId === 'editSchedule') loadEditSchedule();
-    if (sectionId === 'schedule') loadScheduleSection();
-    if (_oldShowSection) _oldShowSection(sectionId);
-};
