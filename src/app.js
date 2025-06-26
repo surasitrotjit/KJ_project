@@ -42,8 +42,16 @@ app.get('/activities', (req, res) => {
 });
 
 // POST เพิ่มกิจกรรม
-// POST เพิ่มกิจกรรม
 app.post('/activities', uploadActivity.single('image'), (req, res) => {
+  // เพิ่ม log เพื่อตรวจสอบค่าที่รับมา
+  console.log('body:', req.body);
+  console.log('file:', req.file);
+
+  // ตรวจสอบว่ามีไฟล์และ detail จริง
+  if (!req.file || !req.body.detail) {
+    return res.status(400).json({ error: 'กรุณาใส่รายละเอียดและเลือกรูปภาพกิจกรรม' });
+  }
+
   const { detail } = req.body;
   const imagePath = '/uploads/activity/' + req.file.filename;
   let activities = [];
@@ -76,11 +84,21 @@ app.put('/activities/:id', (req, res) => {
   });
 });
 
-// DELETE กิจกรรม
+// DELETE กิจกรรม (ลบข้อมูลและไฟล์ภาพ)
 app.delete('/activities/:id', (req, res) => {
   fs.readFile(activitiesFile, 'utf8', (err, data) => {
     if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
     let arr = JSON.parse(data);
+    const activity = arr.find(a => a.id === req.params.id);
+    if (!activity) {
+      return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
+    }
+    // ลบไฟล์ภาพถ้ามี
+    if (activity.imagePath) {
+      const imgPath = path.join(__dirname, '..', activity.imagePath);
+      fs.unlink(imgPath, err => {
+      });
+    }
     arr = arr.filter(a => a.id !== req.params.id);
     fs.writeFile(activitiesFile, JSON.stringify(arr, null, 2), err2 => {
       if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });

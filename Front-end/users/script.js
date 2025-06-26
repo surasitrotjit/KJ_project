@@ -27,9 +27,16 @@ function addItemToGallery(galleryId, data) {
 }
 
 // Handle form submission
+
 function handleSubmit(formId, uploadUrl, galleryId) {
     const form = document.getElementById(formId);
     const formData = new FormData(form);
+
+    // เพิ่ม log เพื่อ debug ข้อมูลที่ส่งไป backend
+    for (let [key, value] of formData.entries()) {
+        console.log('ส่งไป backend:', key, value);
+    }
+
     const loadingIndicator = document.getElementById('uploadLoading');
     if (loadingIndicator) {
         loadingIndicator.style.display = 'flex';
@@ -40,7 +47,8 @@ function handleSubmit(formId, uploadUrl, galleryId) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                // แสดง error message จาก backend ถ้ามี
+                return response.json().then(err => { throw new Error(err.error || 'Network response was not ok'); });
             }
             return response.json();
         })
@@ -61,7 +69,7 @@ function handleSubmit(formId, uploadUrl, galleryId) {
                 loadingIndicator.style.display = 'none';
             }
             console.error('Error:', err);
-            alert('อัพโหลดไม่สำเร็จ! กรุณาลองใหม่อีกครั้ง');
+            alert('อัพโหลดไม่สำเร็จ! ' + err.message);
         });
     return false;
 }
@@ -78,9 +86,16 @@ async function renderActivityGallery() {
     const activities = await loadActivities();
     gallery.innerHTML = '';
     activities
-        .filter(act => act && act.imagePath && act.detail)
-        .forEach(act => {
+    .forEach(act => {
+        if (!act || !act.imagePath || !act.detail || !act.id) {
             gallery.innerHTML += `
+                <div class="activity-card-admin" style="color:red;text-align:center;">
+                    <div>ข้อมูลกิจกรรมไม่สมบูรณ์</div>
+                </div>
+            `;
+            return;
+        }
+        gallery.innerHTML += `
             <div class="activity-card-admin">
                 <img src="http://localhost:3000${act.imagePath}" alt="activity" class="activity-img-admin" onclick="showActivityDetail('${act.id}')">
                 <div class="activity-detail-admin">${act.detail.replace(/\r?\n/g, '<br>')}</div>
@@ -90,7 +105,7 @@ async function renderActivityGallery() {
                 </div>
             </div>
         `;
-        });
+    });
 }
 
 // ลบกิจกรรม
@@ -709,3 +724,7 @@ async function loadScheduleSection() {
         }
     };
 }
+
+window.editActivity = editActivity;
+window.deleteActivity = deleteActivity;
+window.showActivityDetail = showActivityDetail;

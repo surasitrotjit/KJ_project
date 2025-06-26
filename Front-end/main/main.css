@@ -1,3 +1,4 @@
+
 /* Global Styles */
 * {
   margin: 0;
@@ -11,6 +12,7 @@ body {
   color: #333;
   font-size: 16px;
   line-height: 1.6;
+  background: linear-gradient(to right, #f2f9ff, #e3f1ff);
 }
 
   /* Header */
@@ -1400,71 +1402,39 @@ body {
   cursor: pointer;
 }
 
-/* award css */
-.award-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-  gap: 30px;
-  margin-top: 20px;
-  justify-items: center;
-  text-align: center;
 
-  margin-bottom: 60px; /* ✅ เพิ่มระยะห่างด้านล่าง */
+
+
+
+/* Fade-in animation */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s forwards ease-in;
 }
 
-.award-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  height: 100%; /* ให้ขนาดเต็ม container */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.award-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+/* Section Fade Up */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.award-img {
-  width: 150px;
-  height: 150px;
-  object-fit: contain; /* ทำให้รูปไม่เบี้ยว */
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.award-text {
-  font-size: 16px;
-  line-height: 1.4;
-  max-width: 250px;
-}
-
-.award-item {
-  width: 275px;
-  height: 275px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* จัดกลางแนวตั้ง */
-  align-items: center;     /* จัดกลางแนวนอน */
-  text-align: center;
-}
-
-.award-item:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
 
 /* Activity Page Styles */
 .activity-grid {
