@@ -35,45 +35,61 @@ const uploadActivity = multer({ storage: activityStorage });
 
 // GET กิจกรรมทั้งหมด
 app.get('/activities', (req, res) => {
+  console.log('ใช้ไฟล์ activities:', activitiesFile);
   fs.readFile(activitiesFile, (err, data) => {
     if (err) return res.status(500).send('Error reading activities.json');
-    res.json(JSON.parse(data));
+    try {
+      res.json(JSON.parse(data));
+    } catch (e) {
+      res.status(500).send('Error parsing activities.json');
+    }
   });
 });
 
 // POST เพิ่มกิจกรรม
 app.post('/activities', uploadActivity.single('image'), (req, res) => {
-  // เพิ่ม log เพื่อตรวจสอบค่าที่รับมา
-  console.log('body:', req.body);
-  console.log('file:', req.file);
-
-  // ตรวจสอบว่ามีไฟล์และ detail จริง
-  if (!req.file || !req.body.detail) {
-    return res.status(400).json({ error: 'กรุณาใส่รายละเอียดและเลือกรูปภาพกิจกรรม' });
-  }
-
+  console.log('ใช้ไฟล์ activities:', activitiesFile);
   const { detail } = req.body;
   const imagePath = '/uploads/activity/' + req.file.filename;
   let activities = [];
   if (fs.existsSync(activitiesFile)) {
-    activities = JSON.parse(fs.readFileSync(activitiesFile, 'utf8'));
+    try {
+      activities = JSON.parse(fs.readFileSync(activitiesFile, 'utf8'));
+    } catch (e) {
+      activities = [];
+    }
   }
-  // สร้าง id ใหม่ (เพิ่มตรงนี้)
+  // สร้าง id ใหม่
   let newId;
   do {
     newId = Date.now().toString() + Math.floor(Math.random() * 1000);
   } while (activities.some(a => a.id === newId));
   const newItem = { id: newId, detail, imagePath };
   activities.push(newItem);
-  fs.writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
+
+  // Log path และ error
+  console.log('จะเขียนไฟล์ activities ที่:', activitiesFile);
+  try {
+    fs.writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
+    console.log('เขียนไฟล์ activities.json สำเร็จ');
+  } catch (e) {
+    console.error('เขียนไฟล์ activities.json ไม่สำเร็จ:', e);
+    return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message });
+  }
   res.json({ data: newItem });
 });
 
 // PUT แก้ไขกิจกรรม
 app.put('/activities/:id', (req, res) => {
+  console.log('ใช้ไฟล์ activities:', activitiesFile);
   fs.readFile(activitiesFile, 'utf8', (err, data) => {
     if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
-    let arr = JSON.parse(data);
+    let arr = [];
+    try {
+      arr = JSON.parse(data);
+    } catch (e) {
+      return res.status(500).json({ error: 'ไฟล์ activities.json ไม่ถูกต้อง' });
+    }
     const idx = arr.findIndex(a => a.id == req.params.id);
     if (idx === -1) return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
     arr[idx] = { ...arr[idx], ...req.body, id: arr[idx].id };
@@ -86,17 +102,29 @@ app.put('/activities/:id', (req, res) => {
 
 // DELETE กิจกรรม (ลบข้อมูลและไฟล์ภาพ)
 app.delete('/activities/:id', (req, res) => {
+  console.log('ใช้ไฟล์ activities:', activitiesFile);
   fs.readFile(activitiesFile, 'utf8', (err, data) => {
     if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
-    let arr = JSON.parse(data);
+    let arr = [];
+    try {
+      arr = JSON.parse(data);
+    } catch (e) {
+      return res.status(500).json({ error: 'ไฟล์ activities.json ไม่ถูกต้อง' });
+    }
     const activity = arr.find(a => a.id === req.params.id);
     if (!activity) {
       return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
     }
     // ลบไฟล์ภาพถ้ามี
     if (activity.imagePath) {
-      const imgPath = path.join(__dirname, '..', activity.imagePath);
+      const imgPath = path.join(__dirname, '../Back-end', activity.imagePath.replace(/^\//, ''));
+      console.log('จะลบไฟล์ภาพ:', imgPath);
       fs.unlink(imgPath, err => {
+        if (err) {
+          console.error('ลบไฟล์ภาพไม่สำเร็จ:', imgPath, err);
+        } else {
+          console.log('ลบไฟล์ภาพสำเร็จ:', imgPath);
+        }
       });
     }
     arr = arr.filter(a => a.id !== req.params.id);
@@ -121,7 +149,11 @@ const uploadAward = multer({ storage: awardStorage });
 app.get('/awards', (req, res) => {
   fs.readFile(path.join(__dirname, '../Back-end/data/awards.json'), (err, data) => {
     if (err) return res.status(500).send('Error reading awards.json');
-    res.json(JSON.parse(data));
+    try {
+      res.json(JSON.parse(data));
+    } catch (e) {
+      res.status(500).send('Error parsing awards.json');
+    }
   });
 });
 
@@ -131,12 +163,21 @@ app.post('/awards', uploadAward.single('image'), (req, res) => {
   const dataPath = path.join(__dirname, '../Back-end/data/awards.json');
   let awards = [];
   if (fs.existsSync(dataPath)) {
-    awards = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    try {
+      awards = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    } catch (e) {
+      awards = [];
+    }
   }
-  // ต้องใช้ name: winner
   const newItem = { name: winner, detail, imagePath };
   awards.push(newItem);
-  fs.writeFileSync(dataPath, JSON.stringify(awards, null, 2));
+  try {
+    fs.writeFileSync(dataPath, JSON.stringify(awards, null, 2));
+    console.log('เขียนไฟล์ awards.json สำเร็จ');
+  } catch (e) {
+    console.error('เขียนไฟล์ awards.json ไม่สำเร็จ:', e);
+    return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message });
+  }
   res.json({ data: newItem });
 });
 
@@ -144,14 +185,23 @@ app.post('/awards', uploadAward.single('image'), (req, res) => {
 app.get('/students', (req, res) => {
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
-    res.json(JSON.parse(data)); // ต้อง return เป็น { students: [...] }
+    try {
+      res.json(JSON.parse(data));
+    } catch (e) {
+      res.status(500).send('Error parsing students.json');
+    }
   });
 });
 
 app.get('/students/:id', (req, res) => {
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
-    const students = JSON.parse(data).students || [];
+    let students = [];
+    try {
+      students = JSON.parse(data).students || [];
+    } catch (e) {
+      students = [];
+    }
     const student = students.find(s => s.id === req.params.id);
     if (!student) return res.status(404).send('Student not found');
     res.json(student);
@@ -161,7 +211,12 @@ app.get('/students/:id', (req, res) => {
 app.put('/students/:id', (req, res) => {
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
-    let students = JSON.parse(data).students || [];
+    let students = [];
+    try {
+      students = JSON.parse(data).students || [];
+    } catch (e) {
+      students = [];
+    }
     const idx = students.findIndex(s => s.id === req.params.id);
     if (idx === -1) return res.status(404).send('Student not found');
     students[idx] = { ...students[idx], ...req.body, id: students[idx].id };
@@ -175,7 +230,12 @@ app.put('/students/:id', (req, res) => {
 app.delete('/students/:id', (req, res) => {
   fs.readFile(studentsPath, (err, data) => {
     if (err) return res.status(500).send('Error reading students.json');
-    let students = JSON.parse(data).students || [];
+    let students = [];
+    try {
+      students = JSON.parse(data).students || [];
+    } catch (e) {
+      students = [];
+    }
     const newStudents = students.filter(s => s.id !== req.params.id);
     if (students.length === newStudents.length) return res.status(404).send('Student not found');
     fs.writeFile(studentsPath, JSON.stringify({ students: newStudents }, null, 2), (err) => {
