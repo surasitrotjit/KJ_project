@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <title>Login</title>
     <link rel="stylesheet" href="../main/login.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <div class="login-box">
         <h2>Login</h2>
@@ -66,7 +68,7 @@
                 });
                 return;
             }
-            
+
             // ✅ ล็อกอินสำเร็จ
             Swal.fire({
                 icon: 'success',
@@ -76,6 +78,7 @@
             }).then(() => {
                 const role = user.role;
                 if (role === "Administrator") {
+                    localStorage.setItem('lastSection', 'studentTableSection'); // เพิ่มตรงนี้
                     window.location.href = "../../Front-end/users/Admin.html";
                 } else if (role === "Licensee") {
                     window.location.href = "../../Front-end/users/Licensee.html";
@@ -94,12 +97,13 @@
         }
     </script>
     <script>
-        document.getElementById("username").addEventListener("keydown", function(e) {
+        document.getElementById("username").addEventListener("keydown", function (e) {
             if (e.key === "Enter") login();
         });
-        document.getElementById("password").addEventListener("keydown", function(e) {
+        document.getElementById("password").addEventListener("keydown", function (e) {
             if (e.key === "Enter") login();
         });
     </script>
 </body>
+
 </html>

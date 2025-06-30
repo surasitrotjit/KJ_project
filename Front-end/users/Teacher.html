@@ -1,80 +1,100 @@
+<!-- role: teacher -->
 <!DOCTYPE html>
 <html lang="th">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>หน้าแดชบอร์ดครู</title>
-  <link rel="stylesheet" href="Teacher.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Page</title>
+  <link rel="stylesheet" href="Teacher.css">
   <script defer src="teacher.js"></script>
 </head>
 
-<!-- id :user04: { password: "4567", role: "Teacher" }, -->
-
 <body>
   <header class="top-bar">
-    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo" />
-    <h1>โรงเรียนอนุบาลกุลจินต์ - หน้าครู</h1>
-    <button onclick="logout()">ออกจากระบบ</button>
+    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo">
+    <h1>โรงเรียนอนุบาลกุลจินต์</h1>
   </header>
 
   <div class="main-layout">
     <aside class="sidebar">
-      <div class="teacher-profile">
-        <img src="../users/imguser/Ta.png" alt="Teacher" />
-        <p>ครู: คุณครูสมศรี</p>
+      <div class="admin-profile">
+        <img src="../users/imguser/teacher.png" alt="Teacher" />
+        <p>ครูผู้สอน</p>
+        <button onclick="window.location.href='../main/main.html'">ออกจากระบบ</button>
       </div>
       <nav class="sidebar-menu">
-        <button onclick="showSection('news')">ข่าวสารโรงเรียน</button>
-        <button onclick="showSection('schedule')">ตารางเรียน</button>
-        <button onclick="showSection('students')">ข้อมูลนักเรียน</button>
-        <button onclick="showSection('evaluation')">บันทึกผลการประเมิน</button>
-        <button onclick="showSection('report')">ดูรายงานสรุป</button>
+        <details open>
+          <summary>เมนูหลัก</summary>
+          <button onclick="showSection('viewStudents')">รายชื่อนักเรียน</button>
+          <button onclick="showSection('behavior')">บันทึกพฤติกรรม</button>
+          <button onclick="showSection('schedule')">ตารางเรียน</button>
+        </details>
+        <details>
+          <summary>ข่าวสารและกิจกรรม</summary>
+          <button onclick="showSection('viewActivity')">กิจกรรมของโรงเรียน</button>
+          <button onclick="showSection('viewAward')">รางวัลของนักเรียน</button>
+          <button onclick="showSection('news')">ข่าวสารโรงเรียน</button>
+        </details>
       </nav>
     </aside>
 
     <main class="content-area">
-      <section id="news" class="content-section">
-        <h2>ข่าวสารจากโรงเรียน</h2>
-        <ul id="newsList">
-          <!-- ข่าวจะถูกโหลดจากฐานข้อมูลผ่าน JS -->
-        </ul>
+      <!-- รายชื่อนักเรียน -->
+      <section id="viewStudents" class="content-section hidden">
+        <h2>รายชื่อนักเรียน</h2>
+        <div id="studentListContainer"></div>
       </section>
 
+      <!-- ตารางเรียน -->
       <section id="schedule" class="content-section hidden">
-        <h2>ตารางเรียนของนักเรียน</h2>
-        <div id="scheduleTable">
-          <!-- ตารางเรียนจะแสดงตรงนี้ -->
-        </div>
+        <h2>ตารางเรียน</h2>
+        <label>เลือกชั้นเรียน:
+          <select id="teacherScheduleClassSelect">
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1/1">ป.1/1</option>
+            <option value="ป.2/1">ป.2/1</option>
+            <option value="ป.3/1">ป.3/1</option>
+          </select>
+        </label>
+        <button id="showTeacherScheduleBtn">ดูตาราง</button>
+        <div id="teacherScheduleResult"></div>
       </section>
 
-      <section id="students" class="content-section hidden">
-        <h2>ข้อมูลนักเรียน</h2>
-        <div id="studentGroups"></div>
-      </section>
-
-      <section id="evaluation" class="content-section hidden">
-        <h2>บันทึกผลการประเมิน</h2>
-        <form id="evaluationForm">
-          <label for="studentName">ชื่อนักเรียน:</label>
-          <input type="text" id="studentName" required />
-          <label for="score">คะแนน:</label>
-          <input type="number" id="score" min="0" max="100" required />
-          <label for="comment">ความคิดเห็นเพิ่มเติม:</label>
-          <textarea id="comment"></textarea>
-          <button type="submit">บันทึกผล</button>
+      <!-- บันทึกพฤติกรรมนักเรียน -->
+      <section id="behavior" class="content-section hidden">
+        <h2>บันทึกพฤติกรรมนักเรียน</h2>
+        <form id="behaviorForm">
+          <label>รหัสนักเรียน:</label>
+          <input type="text" name="studentId" required />
+          <label>พฤติกรรมที่พบ:</label>
+          <textarea name="behaviorDetail" required></textarea>
+          <button type="submit">บันทึก</button>
         </form>
+        <div id="behaviorLog"></div>
       </section>
 
-      <section id="report" class="content-section hidden">
-        <h2>รายงานสรุปนักเรียน</h2>
-        <div id="reportChart">
-          <!-- กราฟหรือสรุปผลนักเรียน -->
-        </div>
+      <!-- ดูกิจกรรมโรงเรียน -->
+      <section id="viewActivity" class="content-section hidden">
+        <h2>กิจกรรมโรงเรียน</h2>
+        <div id="activityGalleryTeacher"></div>
+      </section>
+
+      <!-- ดูรางวัลนักเรียน -->
+      <section id="viewAward" class="content-section hidden">
+        <h2>รางวัลของนักเรียน</h2>
+        <div id="awardGalleryTeacher"></div>
+      </section>
+
+      <!-- ข่าวสาร -->
+      <section id="news" class="content-section hidden">
+        <h2>ข่าวสารโรงเรียน</h2>
+        <ul id="newsListTeacher"></ul>
       </section>
     </main>
   </div>
-
 </body>
 
 </html>

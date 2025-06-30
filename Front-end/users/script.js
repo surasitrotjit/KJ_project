@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลนักเรียนได้: " + res.status);
                 return res.json();
             })
-            .then(data => renderStudentGroups(data.students))
+            .then(data => renderStudentGroups(Array.isArray(data) ? data : data.students || []))
             .catch(err => {
                 studentGroupsDiv.innerHTML = "<p>เกิดข้อผิดพลาดในการโหลดข้อมูลนักเรียน</p>";
                 console.error("Student fetch error:", err);
@@ -487,7 +487,7 @@ async function renderStudentTableSimple() {
     const container = document.getElementById('studentTableContainer');
     if (!container) return;
     try {
-        const res = await fetch('students.json');
+        const res = await fetch('http://localhost:3000/students');
         const data = await res.json();
         const students = Array.isArray(data) ? data : data.students || [];
         // กรองเฉพาะที่มีข้อมูลสำคัญ

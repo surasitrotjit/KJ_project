@@ -1,7 +1,8 @@
 // โหลดข้อมูลนักเรียนจาก backend
 async function loadStudents() {
-  const res = await fetch('http://localhost:3000/students');
-  return await res.json();
+  const res = await fetch('students.json'); // ใช้ path สั้นสุด
+  const data = await res.json();
+  return data.students;
 }
 
 // แสดงกลุ่มนักเรียนแบบเดียวกับ admin
@@ -37,15 +38,16 @@ async function renderStudentGroups() {
     html += `</tbody></table>`;
   });
 
-  document.getElementById('studentGroups').innerHTML = html;
+  // เปลี่ยน studentGroups เป็น studentListContainer
+  document.getElementById('studentListContainer').innerHTML = html;
 }
 
-// เรียกเมื่อเปิด section students
+// เรียกเมื่อเปิด section viewStudents
 function showSection(sectionId) {
   document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
   document.getElementById(sectionId).classList.remove('hidden');
-  if (sectionId === 'students') renderStudentGroups();
-  // ...ส่วนอื่นๆ...
+  // เปลี่ยน students เป็น viewStudents
+  if (sectionId === 'viewStudents') renderStudentGroups();
 }
 
 window.showSection = showSection;
