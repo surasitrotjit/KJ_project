@@ -564,12 +564,29 @@ async function loadSchedule() {
     return await res.json();
 }
 
-// บันทึกข้อมูลตารางเรียนไป backend
+// แปลง object { "จันทร์": [ ... ], ... } เป็น array [{day: "จันทร์", period1: ..., ...}, ...]
+function convertScheduleArrayToObject(scheduleArr) {
+    const result = {};
+    Object.keys(scheduleArr).forEach(className => {
+        result[className] = {};
+        scheduleArr[className].forEach(dayObj => {
+            const day = dayObj.day;
+            result[className][day] = [];
+            for (let i = 1; i <= 8; i++) {
+                result[className][day].push(dayObj[`period${i}`] || "");
+            }
+        });
+    });
+    return result;
+}
+
+// แก้ไข saveSchedule ให้แปลงก่อนส่ง
 async function saveSchedule(schedule) {
+    const converted = convertScheduleObjectToArray(schedule);
     await fetch('http://localhost:3000/schedule', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(schedule)
+        body: JSON.stringify(converted)
     });
 }
 
@@ -615,6 +632,7 @@ function renderEditScheduleDayForm(scheduleData, className, day, updateForm) {
 
 // แสดงตารางเรียนรวมทุกวัน
 function renderScheduleTable(scheduleData, className) {
+    scheduleData = convertScheduleArrayToObject(scheduleData);
     const container = document.getElementById('scheduleTableContainer');
     if (!container) return;
     if (!scheduleData[className]) {
@@ -686,6 +704,7 @@ function renderScheduleTableView(scheduleData, className, day) {
 // โหลดและแสดงฟอร์มแก้ไขตารางเรียนเฉพาะวัน
 async function loadEditSchedule() {
     let scheduleData = await loadSchedule();
+    scheduleData = convertScheduleArrayToObject(scheduleData);
     const classSelect = document.getElementById('editScheduleClassSelect');
     const daySelect = document.getElementById('editScheduleDaySelect');
     const showTableBtn = document.getElementById('showScheduleTableBtn');
@@ -713,6 +732,7 @@ async function loadEditSchedule() {
 // โหลดและแสดงตารางเรียน (เลือกวัน/ทุกวัน)
 async function loadScheduleSection() {
     let scheduleData = await loadSchedule();
+    scheduleData = convertScheduleArrayToObject(scheduleData);
     const classSelect = document.getElementById('scheduleClassSelect');
     const daySelect = document.getElementById('scheduleDaySelect');
     const showBtn = document.getElementById('showScheduleBtn');

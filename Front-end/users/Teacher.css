@@ -203,3 +203,27 @@ form#evaluationForm button:hover {
 .hidden {
   display: none;
 }
+
+.student-table {
+  width: 100%;
+  max-width: 1400px;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  table-layout: fixed;
+}
+
+.student-table th, .student-table td {
+  border: 1px solid #aaa;
+  padding: 8px 12px;
+  text-align: left;
+  word-break: break-word;
+}
+
+.student-table th {
+  background: #ffe0f0;
+  font-weight: bold;
+}
+
+.student-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
