@@ -1,0 +1,156 @@
+/* พื้นฐาน */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Prompt", sans-serif;
+}
+
+body {
+  background-color: #fdf5f9;
+  color: #333;
+}
+
+/* Header */
+.top-bar {
+  background-color: #ff7eb9;
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar .logo {
+  height: 50px;
+  margin-right: 20px;
+}
+
+.top-bar h1 {
+  font-size: 1.6rem;
+  flex: 1;
+}
+
+.top-bar button {
+  background-color: #fff;
+  color: #ff4d88;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.top-bar button:hover {
+  background-color: #ffe6f0;
+}
+
+/* Layout หลัก */
+.main-layout {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: #ffe0f0;
+  padding: 20px;
+  border-right: 2px solid #ffcce5;
+}
+
+.admin-profile {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.admin-profile img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #ff99cc;
+  margin-bottom: 10px;
+}
+
+.admin-profile p {
+  font-weight: bold;
+  color: #d63384;
+  margin-bottom: 8px;
+}
+
+.sidebar-menu button {
+  display: block;
+  width: 100%;
+  background-color: #ffb3d9;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.sidebar-menu button:hover {
+  background-color: #ff80bf;
+}
+
+/* Content Area */
+.content-area {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.content-section h2 {
+  color: #cc007a;
+  margin-bottom: 20px;
+}
+
+/* ตาราง */
+#studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+#studentTable th, #studentTable td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+#studentTable th {
+  background-color: #ffe6f0;
+  color: #cc0066;
+}
+
+#studentTable tr:nth-child(even) {
+  background-color: #fff7fb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #ffcce5;
+  }
+
+  .sidebar-menu button {
+    width: 100%;
+  }
+
+  .content-area {
+    padding: 20px;
+  }
+}

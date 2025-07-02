@@ -135,6 +135,85 @@ app.delete('/activities/:id', (req, res) => {
   });
 });
 
+const visitorStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../Back-end/uploads/visitor'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+const uploadVisitor = multer({ storage: visitorStorage });
+
+const visitorsFile = path.join(__dirname, '../Back-end/data/visitors.json');
+
+
+// GET: ดึง visitor ทั้งหมด
+app.get('/visitors', (req, res) => {
+  fs.readFile(visitorsFile, 'utf8', (err, data) => {
+    if (err) return res.json([]);
+    res.json(JSON.parse(data || '[]'));
+  });
+});
+
+// POST: เพิ่ม visitor
+app.post('/visitors', uploadVisitor.array('images', 10), (req, res) => {
+  fs.readFile(visitorsFile, 'utf8', (err, data) => {
+    let visitors = [];
+    if (!err && data) visitors = JSON.parse(data);
+    const newVisitor = {
+      id: Date.now().toString(),
+      detail: req.body.detail,
+      images: req.files ? req.files.map(f => f.filename) : []
+    };
+    visitors.push(newVisitor);
+    fs.writeFile(visitorsFile, JSON.stringify(visitors, null, 2), () => {
+      res.json({ success: true, visitor: newVisitor });
+    });
+  });
+});
+
+// PUT: แก้ไข visitor
+app.put('/visitors/:id', express.json(), (req, res) => {
+  fs.readFile(visitorsFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).end();
+    let visitors = JSON.parse(data);
+    const idx = visitors.findIndex(v => v.id === req.params.id);
+    if (idx !== -1) {
+      visitors[idx].detail = req.body.detail;
+      fs.writeFile(visitorsFile, JSON.stringify(visitors, null, 2), () => {
+        res.json({ success: true });
+      });
+    } else {
+      res.status(404).end();
+    }
+  });
+});
+
+// DELETE: ลบ visitor
+app.delete('/visitors/:id', (req, res) => {
+  fs.readFile(visitorsFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).end();
+    let visitors = JSON.parse(data);
+    const idx = visitors.findIndex(v => v.id === req.params.id);
+    if (idx !== -1) {
+      // ลบไฟล์ภาพ
+      if (visitors[idx].images && visitors[idx].images.length > 0) {
+        visitors[idx].images.forEach(img => {
+          const imgPath = path.join(__dirname, '../Back-end/uploads/visitor', img);
+          if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+        });
+      }
+      visitors.splice(idx, 1);
+      fs.writeFile(visitorsFile, JSON.stringify(visitors, null, 2), () => {
+        res.json({ success: true });
+      });
+    } else {
+      res.status(404).end();
+    }
+  });
+});
+
 // ----------------- รางวัล (Award) -----------------
 const awardStorage = multer.diskStorage({
   destination: (req, file, cb) => {

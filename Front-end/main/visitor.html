@@ -71,32 +71,7 @@
         </div>
       
         <div class="visitors-gallery">
-          <!-- ตัวอย่าง visitors-item -->
-          <div class="visitors-item"
-            data-title="ผู้มาเยี่ยมชม"
-            data-desc="สำนักงานส่งเสริมการศึกษานอกระบบและการศึกษาตามอัธยาศัยจังหวัดสงขลา (กศน.สงขลา) เยี่ยมการจัดการเรียนร่วมโรงเรียนอนุบาลกุลจินต์ วันที่ 8 พฤศจิกายน วันที่ 1 ธันวาคม และ วันที่ 8 ธันวาคม 2559"
-            data-images="../Image/logo.png,../Image/logo2.png,../Image/logo3.png">
-            <img class="visitors-img" src="../Image/logo.png" alt="รูปโลโก้" onclick="openPopup(this)" />
-            <div class="visitors-text">
-              สำนักงานส่งเสริมการศึกษานอกระบบและการศึกษาตามอัธยาศัยจังหวัดสงขลา (กศน.สงขลา) เยี่ยมการจัดการเรียนร่วมโรงเรียนอนุบาลกุลจินต์ วันที่ 8 พฤศจิกายน วันที่ 1 ธันวาคม และ วันที่ 8 ธันวาคม 2559
-            </div>
-          </div>
-      
-          <!-- ✅ visitors-item ว่าง สำหรับกรอกข้อมูลและอัปโหลดรูป
-          <div class="visitors-item visitors-item-form">
-            <form action="#" method="POST" enctype="multipart/form-data">
-              <label for="visitor-title">ชื่อผู้เยี่ยมชม:</label>
-              <input type="text" id="visitor-title" name="visitor-title" placeholder="กรอกชื่อผู้เยี่ยมชม" required>
-      
-              <label for="visitor-desc">รายละเอียด:</label>
-              <textarea id="visitor-desc" name="visitor-desc" rows="4" placeholder="กรอกรายละเอียด" required></textarea>
-      
-              <label for="visitor-images">อัปโหลดรูปภาพ:</label>
-              <input type="file" id="visitor-images" name="visitor-images" accept="image/*" multiple required>
-      
-              <button type="submit">เพิ่มข้อมูลผู้เยี่ยมชม</button>
-            </form>
-          </div> -->
+          <!-- JS จะเติมข้อมูลที่นี่ -->
         </div>
       
         <!-- ✅ Footer อยู่ภายใน visitors-section -->
@@ -156,19 +131,68 @@
             header.classList.remove('scrolled');
           }
         });
-      
+
+        // ===== ดึงข้อมูล visitors.json และแสดงผล =====
+        async function loadVisitors() {
+          try {
+            // ปรับ path ให้ตรงกับ backend ที่ให้บริการ
+            const res = await fetch('/data/visitors.json');
+            const visitors = await res.json();
+
+            const gallery = document.querySelector('.visitors-gallery');
+            gallery.innerHTML = '';
+
+            if (!Array.isArray(visitors) || visitors.length === 0) {
+              gallery.innerHTML = '<div style="color:gray;text-align:center;">ไม่มีข้อมูลผู้เยี่ยมชม</div>';
+              return;
+            }
+
+            visitors.forEach(visitor => {
+              // สมมติ visitor.images เป็น array ของชื่อไฟล์ เช่น ["img1.jpg","img2.jpg"]
+              const images = (visitor.images || []).map(img => `../visitors/${img}`).join(',');
+
+              const item = document.createElement('div');
+              item.className = 'visitors-item';
+              item.setAttribute('data-title', visitor.title || '');
+              item.setAttribute('data-desc', visitor.desc || '');
+              item.setAttribute('data-images', images);
+
+              // รูปแรกเป็นรูปหลัก
+              const mainImg = document.createElement('img');
+              mainImg.className = 'visitors-img';
+              mainImg.src = visitor.images && visitor.images.length > 0 ? `../visitors/${visitor.images[0]}` : '../Image/logo.png';
+              mainImg.alt = visitor.title || '';
+              mainImg.onclick = function() { openPopup(this); };
+
+              const textDiv = document.createElement('div');
+              textDiv.className = 'visitors-text';
+              textDiv.textContent = visitor.desc || '';
+
+              item.appendChild(mainImg);
+              item.appendChild(textDiv);
+
+              gallery.appendChild(item);
+            });
+          } catch (err) {
+            document.querySelector('.visitors-gallery').innerHTML = '<div style="color:red;">ไม่สามารถโหลดข้อมูลผู้เยี่ยมชมได้</div>';
+          }
+        }
+
+        // เรียกใช้เมื่อโหลดหน้าเสร็จ
+        window.addEventListener('DOMContentLoaded', loadVisitors);
+
         // ===== Visitors Popup Functions =====
         function openPopup(clickedImg) {
           const parentItem = clickedImg.closest('.visitors-item');
           const desc = parentItem.getAttribute('data-desc') || '';
           const imagesStr = parentItem.getAttribute('data-images') || '';
-          const imagePaths = imagesStr.split(',');
-      
+          const imagePaths = imagesStr.split(',').filter(Boolean);
+
           document.getElementById('popupText').textContent = desc;
-      
+
           const gallery = document.getElementById('popupGallery');
           gallery.innerHTML = ''; // Clear previous images
-      
+
           imagePaths.forEach((src) => {
             const img = document.createElement('img');
             img.src = src.trim();
@@ -176,7 +200,7 @@
             img.onclick = () => openFullImage(src.trim());
             gallery.appendChild(img);
           });
-      
+
           document.getElementById('popup').style.display = 'flex';
         }
       
@@ -199,4 +223,4 @@
       </script>
       
 </body>
-</html>
+  </html>

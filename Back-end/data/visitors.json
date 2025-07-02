@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1751430000001",
+    "detail": "คุณสมชาย เยี่ยมชมโรงเรียน",
+    "images": ["visitor1.jpg", "visitor2.jpg"]
+  },
+  {
+    "id": "1751430000002",
+    "detail": "คณะครูจากต่างจังหวัด",
+    "images": ["visitor3.jpg"]
+  },
+  {
+    "id": "1751430000003",
+    "detail": "นักเรียนแลกเปลี่ยนจากญี่ปุ่น",
+    "images": ["visitor4.jpg", "visitor5.jpg", "visitor6.jpg"]
+  }
+]

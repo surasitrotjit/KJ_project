@@ -6,6 +6,7 @@ window.showSection = function (sectionId) {
     document.getElementById(sectionId).classList.remove('hidden');
     localStorage.setItem('lastSection', sectionId);
     if (sectionId === 'activity') renderActivityGallery();
+    if (sectionId === 'visitor') renderVisitorGallery(); // <<== เพิ่มบรรทัดนี้
     if (sectionId === 'editSchedule') loadEditSchedule();
     if (sectionId === 'schedule') loadScheduleSection();
 };
@@ -174,10 +175,89 @@ window.onload = () => {
     if (visitorForm) {
         visitorForm.onsubmit = (event) => {
             event.preventDefault();
-            handleSubmit('visitorForm', 'http://localhost:3000/upload/visitor', 'visitorGallery');
+            handleSubmit('visitorForm', 'http://localhost:3000/visitors', 'visitorGallery');
         };
     }
 };
+
+async function renderVisitorGallery() {
+  const gallery = document.getElementById('visitorGallery');
+  if (!gallery) return;
+  gallery.innerHTML = '<div>กำลังโหลด...</div>';
+  const res = await fetch('http://localhost:3000/visitors');
+  const visitors = await res.json();
+  gallery.innerHTML = '';
+  visitors.forEach(visitor => {
+    const card = document.createElement('div');
+    card.className = 'visitor-card';
+    card.innerHTML = `
+      <img src="http://localhost:3000/uploads/visitor/${visitor.images?.[0] || 'default.png'}" alt="visitor" style="width:100%;max-width:180px;border-radius:8px;margin-bottom:8px;">
+      <div class="visitor-desc">${visitor.detail || ''}</div>
+      <button onclick="editVisitor('${visitor.id}')">แก้ไข</button>
+      <button onclick="deleteVisitor('${visitor.id}')">ลบ</button>
+    `;
+    gallery.appendChild(card);
+  });
+}
+
+// เพิ่ม visitor (handleSubmit)
+const visitorForm = document.getElementById('visitorForm');
+if (visitorForm) {
+  visitorForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(visitorForm);
+    const res = await fetch('http://localhost:3000/visitors', {
+      method: 'POST',
+      body: formData
+    });
+    if (res.ok) {
+      visitorForm.reset();
+      renderVisitorGallery();
+      alert('เพิ่มข้อมูลผู้เยี่ยมชมสำเร็จ');
+    } else {
+      alert('เกิดข้อผิดพลาดในการเพิ่มข้อมูล');
+    }
+  };
+}
+
+// ลบ visitor
+window.deleteVisitor = async function(id) {
+  if (!confirm('ยืนยันการลบ?')) return;
+  const res = await fetch(`http://localhost:3000/visitors/${id}`, { method: 'DELETE' });
+  if (res.ok) {
+    renderVisitorGallery();
+  } else {
+    alert('ลบไม่สำเร็จ');
+  }
+};
+
+// แก้ไข visitor (popup แบบ prompt)
+window.editVisitor = async function(id) {
+  const res = await fetch('http://localhost:3000/visitors');
+  const visitors = await res.json();
+  const visitor = visitors.find(v => v.id === id);
+  const newDetail = prompt('แก้ไขรายละเอียด:', visitor.detail);
+  if (newDetail !== null && newDetail !== visitor.detail) {
+    const updateRes = await fetch(`http://localhost:3000/visitors/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ detail: newDetail })
+    });
+    if (updateRes.ok) {
+      renderVisitorGallery();
+    } else {
+      alert('แก้ไขไม่สำเร็จ');
+    }
+  }
+};
+
+// โหลด visitor เมื่อเปิด section
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('visitorGallery')) {
+    renderVisitorGallery();
+  }
+});
+
 
 // ข่าวสาร: จัดการข่าว (เพิ่มข่าวใหม่ในหน้า)
 const newsForm = document.getElementById('newsForm');

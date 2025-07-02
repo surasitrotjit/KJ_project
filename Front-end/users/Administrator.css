@@ -478,3 +478,33 @@ ul li {
 .activity-actions-admin .view-btn-admin:hover {
   background: #388e3c;
 }
+
+
+#visitorGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.visitor-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 16px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.visitor-card img {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.visitor-card .visitor-desc {
+  margin-bottom: 8px;
+  text-align: center;
+}
+.visitor-card button {
+  margin: 0 4px;
+}
