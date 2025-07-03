@@ -3,15 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>หน้าผู้รับใบอนุญาต</title>
-  <link rel="stylesheet" href="Licensee.css">
+  <link rel="stylesheet" href="Licensee.css" />
   <script defer src="Licensee.js"></script>
 </head>
 
 <body>
   <header class="top-bar">
-    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo">
+    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo" />
     <h1>โรงเรียนอนุบาลกุลจินต์</h1>
   </header>
 
@@ -26,28 +26,44 @@
         <details open>
           <summary>เมนูผู้รับใบอนุญาต</summary>
           <button onclick="showSection('overview')">รายชื่อนักเรียน</button>
+          <button onclick="showSection('news')">ข่าวสารโรงเรียน</button>
         </details>
       </nav>
     </aside>
 
     <main class="content-area">
+      <!-- รายชื่อนักเรียน -->
       <section id="overview" class="content-section">
-  <h2>รายชื่อนักเรียน</h2>
-  <table id="studentTable" border="1" cellspacing="0" cellpadding="8">
-    <thead>
-      <tr>
-        <th>ชื่อ</th>
-        <th>นามสกุล</th>
-        <th>ชั้นเรียน</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- ข้อมูลจะถูกเติมโดย JS -->
-    </tbody>
-  </table>
-</section>
+        <h2>รายชื่อนักเรียน</h2>
+        <table id="studentTable" border="1" cellspacing="0" cellpadding="8">
+          <thead>
+            <tr>
+              <th>ชื่อ</th>
+              <th>นามสกุล</th>
+              <th>ชั้นเรียน</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ข้อมูลจะถูกเติมโดย JS -->
+          </tbody>
+        </table>
+      </section>
 
+      <!-- ข่าวสารโรงเรียน -->
+      <section id="news" class="content-section hidden">
+        <h2>ข่าวสารโรงเรียน</h2>
+        <form id="newsForm">
+          <label for="newsTitle">หัวข้อข่าว:</label>
+          <input type="text" id="newsTitle" name="title" required />
 
+          <label for="newsDetail">รายละเอียด:</label>
+          <textarea id="newsDetail" name="detail" required></textarea>
+
+          <button type="submit">บันทึก</button>
+        </form>
+
+        <ul id="newsList"></ul>
+      </section>
     </main>
   </div>
 </body>

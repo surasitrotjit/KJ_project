@@ -22,6 +22,7 @@ app.use((req, res, next) => {
 // Static path สำหรับรูป
 app.use('/uploads', express.static(path.join(__dirname, '../Back-end/uploads')));
 
+
 // ----------------- กิจกรรม (Activity) -----------------
 const activityStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -137,7 +138,7 @@ app.delete('/activities/:id', (req, res) => {
 
 const visitorStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../Back-end/uploads/visitor'));
+    cb(null, path.join(__dirname, '../Back-end/uploads/visitors')); // เปลี่ยนเป็น visitor
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -147,7 +148,6 @@ const uploadVisitor = multer({ storage: visitorStorage });
 
 const visitorsFile = path.join(__dirname, '../Back-end/data/visitors.json');
 
-
 // GET: ดึง visitor ทั้งหมด
 app.get('/visitors', (req, res) => {
   fs.readFile(visitorsFile, 'utf8', (err, data) => {
@@ -156,7 +156,7 @@ app.get('/visitors', (req, res) => {
   });
 });
 
-// POST: เพิ่ม visitor
+// POST: เพิ่ม visitor (รองรับหลายรูป)
 app.post('/visitors', uploadVisitor.array('images', 10), (req, res) => {
   fs.readFile(visitorsFile, 'utf8', (err, data) => {
     let visitors = [];
@@ -200,7 +200,7 @@ app.delete('/visitors/:id', (req, res) => {
       // ลบไฟล์ภาพ
       if (visitors[idx].images && visitors[idx].images.length > 0) {
         visitors[idx].images.forEach(img => {
-          const imgPath = path.join(__dirname, '../Back-end/uploads/visitor', img);
+          const imgPath = path.join(__dirname, '../Back-end/uploads/visitors', img); // <-- ต้องเติม s
           if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
         });
       }

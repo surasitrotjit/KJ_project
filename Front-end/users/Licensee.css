@@ -11,6 +11,11 @@ body {
   color: #333;
 }
 
+/* ซ่อน section */
+.hidden {
+  display: none !important;
+}
+
 /* Header */
 .top-bar {
   background-color: #ff7eb9;
@@ -119,7 +124,8 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
-#studentTable th, #studentTable td {
+#studentTable th,
+#studentTable td {
   padding: 12px 16px;
   text-align: center;
   border-bottom: 1px solid #f2f2f2;
@@ -132,6 +138,72 @@ body {
 
 #studentTable tr:nth-child(even) {
   background-color: #fff7fb;
+}
+
+/* ฟอร์มข่าวสาร */
+#newsForm {
+  background-color: #fff0f5;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+#newsForm label {
+  display: block;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+#newsForm input,
+#newsForm textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+#newsForm button {
+  margin-top: 15px;
+  background-color: #ff66a3;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#newsForm button:hover {
+  background-color: #ff3385;
+}
+
+/* ข่าวสารรายการ */
+#newsList {
+  list-style-type: none;
+  max-width: 600px;
+  padding-left: 0;
+}
+
+#newsList li {
+  background: #fff;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  color: #333;
+  font-size: 1rem;
+}
+
+#newsList li strong {
+  color: #cc0066;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 /* Responsive */

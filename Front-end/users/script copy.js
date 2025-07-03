@@ -6,7 +6,8 @@ window.showSection = function (sectionId) {
     document.getElementById(sectionId).classList.remove('hidden');
     localStorage.setItem('lastSection', sectionId);
     if (sectionId === 'activity') renderActivityGallery();
-    if (sectionId === 'visitor') renderVisitorGallery(); // <<== เพิ่มบรรทัดนี้
+    if (sectionId === 'award') renderAwardGallery(); // เพิ่มบรรทัดนี้
+    if (sectionId === 'visitor') renderVisitorGallery();
     if (sectionId === 'editSchedule') loadEditSchedule();
     if (sectionId === 'schedule') loadScheduleSection();
 };
@@ -53,14 +54,15 @@ function handleSubmit(formId, uploadUrl, galleryId) {
             }
             return response.json();
         })
-        .then(data => {
+        .then(async data => {
             if (loadingIndicator) {
                 loadingIndicator.style.display = 'none';
             }
             alert('อัพโหลดสำเร็จ!');
             form.reset();
-            if (galleryId === 'activityGallery') {
-                renderActivityGallery();
+            // ถ้าเป็นรางวัล ให้ refresh ทั้ง gallery เพื่อให้ id ตรง backend
+            if (galleryId === 'awardGallery') {
+                renderAwardGallery();
             } else if (galleryId) {
                 addItemToGallery(galleryId, data.data);
             }
@@ -850,5 +852,84 @@ window.onclick = function (event) {
     const modal = document.getElementById('visitorModal');
     if (event.target === modal) {
         modal.style.display = 'none';
+    }
+};
+
+async function renderAwardGallery() {
+    const gallery = document.getElementById('awardGallery');
+    if (!gallery) return;
+    const res = await fetch('http://localhost:3000/awards');
+    let awards = await res.json();
+    // เพิ่ม id ให้กับรางวัลที่ไม่มี id (ใช้ index + 1)
+    awards = awards.map((a, idx) => {
+        if (!a.id) {
+            return { ...a, id: (idx + 1).toString() };
+        }
+        return a;
+    });
+    gallery.innerHTML = '';
+    // กรองเฉพาะรางวัลที่มี detail จริงเท่านั้น
+    const validAwards = awards.filter(a => a && a.detail && a.detail.trim() !== '');
+    if (!validAwards.length) {
+        gallery.innerHTML = '<p style="color:red;text-align:center;">ไม่พบข้อมูลรางวัลที่สมบูรณ์</p>';
+        return;
+    }
+    validAwards.forEach(award => {
+        // debug id
+        console.log('award id:', award.id, award);
+        const imgSrc = award.imagePath ? `http://localhost:3000${award.imagePath}` : 'https://cdn-icons-png.flaticon.com/512/190/190411.png';
+        gallery.innerHTML += `
+            <div class="award-card-admin">
+                <img src="${imgSrc}" alt="award" class="award-img-admin">
+                <div class="award-detail-admin">${award.detail.replace(/\r?\n/g, '<br>')}</div>
+                <div class="award-winner-admin"><b>${award.name || award.winner || ''}</b></div>
+                <div class="award-actions-admin">
+                    <button onclick="editAward('${award.id}')">แก้ไข</button>
+                    <button onclick="deleteAward('${award.id}')">ลบ</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+window.deleteAward = async function (id) {
+    // debug id
+    alert('จะลบ award id: ' + id);
+    if (!confirm('ยืนยันการลบรางวัลนี้?')) return;
+    const res = await fetch(`http://localhost:3000/awards/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+        alert('ลบรางวัลสำเร็จ!');
+        renderAwardGallery();
+    } else {
+        alert('ลบไม่สำเร็จ (status: ' + res.status + ')');
+        console.error('Delete award failed', res);
+    }
+};
+
+window.editAward = async function (id) {
+    const res = await fetch('http://localhost:3000/awards');
+    let awards = await res.json();
+    awards = awards.map((a, idx) => {
+        if (!a.id) {
+            return { ...a, id: (idx + 1).toString() };
+        }
+        return a;
+    });
+    const award = awards.find(a => a.id == id);
+    if (!award) return alert('ไม่พบข้อมูลรางวัล');
+    const newDetail = prompt('แก้ไขรายละเอียดรางวัล:', award.detail);
+    if (newDetail !== null && newDetail !== award.detail) {
+        // ส่งข้อมูลใหม่ไปยัง backend พร้อม id
+        const updateRes = await fetch(`http://localhost:3000/awards/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...award, detail: newDetail, id: id })
+        });
+        if (updateRes.ok) {
+            alert('แก้ไขรางวัลสำเร็จ!');
+            renderAwardGallery();
+        } else {
+            alert('แก้ไขไม่สำเร็จ');
+        }
     }
 };
