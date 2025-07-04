@@ -26,7 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../Back-end/uploads')))
 // ----------------- กิจกรรม (Activity) -----------------
 const activityStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../Back-end/uploads/activity'));
+    cb(null, path.join(__dirname, '../Back-end/uploads/activity')); // เปลี่ยนเป็น activities (เติม s)
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -48,36 +48,20 @@ app.get('/activities', (req, res) => {
 });
 
 // POST เพิ่มกิจกรรม
-app.post('/activities', uploadActivity.single('image'), (req, res) => {
-  console.log('ใช้ไฟล์ activities:', activitiesFile);
-  const { detail } = req.body;
-  const imagePath = '/uploads/activity/' + req.file.filename;
-  let activities = [];
-  if (fs.existsSync(activitiesFile)) {
-    try {
-      activities = JSON.parse(fs.readFileSync(activitiesFile, 'utf8'));
-    } catch (e) {
-      activities = [];
-    }
-  }
-  // สร้าง id ใหม่
-  let newId;
-  do {
-    newId = Date.now().toString() + Math.floor(Math.random() * 1000);
-  } while (activities.some(a => a.id === newId));
-  const newItem = { id: newId, detail, imagePath };
-  activities.push(newItem);
-
-  // Log path และ error
-  console.log('จะเขียนไฟล์ activities ที่:', activitiesFile);
-  try {
-    fs.writeFileSync(activitiesFile, JSON.stringify(activities, null, 2));
-    console.log('เขียนไฟล์ activities.json สำเร็จ');
-  } catch (e) {
-    console.error('เขียนไฟล์ activities.json ไม่สำเร็จ:', e);
-    return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message });
-  }
-  res.json({ data: newItem });
+app.post('/activities', uploadActivity.array('images', 10), (req, res) => {
+  fs.readFile(activitiesFile, 'utf8', (err, data) => {
+    let activities = [];
+    if (!err && data) activities = JSON.parse(data);
+    const newActivity = {
+      id: Date.now().toString(),
+      detail: req.body.detail,
+      images: req.files ? req.files.map(f => f.filename) : []
+    };
+    activities.push(newActivity);
+    fs.writeFile(activitiesFile, JSON.stringify(activities, null, 2), () => {
+      res.json({ success: true, activity: newActivity });
+    });
+  });
 });
 
 // PUT แก้ไขกิจกรรม

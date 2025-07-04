@@ -51,7 +51,7 @@
             <textarea name="detail" required rows="3" style="width:100%;"></textarea>
           </label><br>
           <label>เลือกรูปภาพกิจกรรม:<br>
-            <input type="file" name="image" accept="image/*" required>
+            <input type="file" name="images" id="activityImages" accept="image/*" multiple required>
           </label><br>
           <button type="submit">เพิ่มกิจกรรม</button>
           <span id="uploadLoading" style="display:none;">กำลังอัพโหลด...</span>
@@ -63,7 +63,7 @@
             <span id="closeActivityModal" class="close">&times;</span>
             <img id="activityModalImg" src="" alt="activity" style="max-width:100%;margin-bottom:12px;">
             <div id="activityModalDetail"></div>
-            <div id="activityModalActions"></div> 
+            <div id="activityModalActions"></div>
           </div>
         </div>
       </section>
@@ -247,12 +247,12 @@
     </main>
   </div>
   <div id="visitorModal" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span id="closeVisitorModal" class="close" style="cursor:pointer;font-size:2em;">&times;</span>
-    <img id="visitorModalImg" src="" alt="visitor" style="max-width:100%;margin-bottom:12px;">
-    <div id="visitorModalDetail"></div>
+    <div class="modal-content">
+      <span id="closeVisitorModal" class="close" style="cursor:pointer;font-size:2em;">&times;</span>
+      <img id="visitorModalImg" src="" alt="visitor" style="max-width:100%;margin-bottom:12px;">
+      <div id="visitorModalDetail"></div>
+    </div>
   </div>
-</div>
 </body>
 
 </html>

@@ -84,29 +84,28 @@ async function loadActivities() {
 // แสดงกิจกรรมทั้งหมด
 async function renderActivityGallery() {
     const gallery = document.getElementById('activityGallery');
-    const activities = await loadActivities();
+    if (!gallery) return;
+    gallery.innerHTML = '<div>กำลังโหลด...</div>';
+    const res = await fetch('http://localhost:3000/activities');
+    const activities = await res.json();
     gallery.innerHTML = '';
-    activities
-        .forEach(act => {
-            if (!act || !act.imagePath || !act.detail || !act.id) {
-                gallery.innerHTML += `
-                <div class="activity-card-admin" style="color:red;text-align:center;">
-                    <div>ข้อมูลกิจกรรมไม่สมบูรณ์</div>
-                </div>
-            `;
-                return;
-            }
-            gallery.innerHTML += `
-            <div class="activity-card-admin">
-                <img src="http://localhost:3000${act.imagePath}" alt="activity" class="activity-img-admin" onclick="showActivityDetail('${act.id}')">
-                <div class="activity-detail-admin">${act.detail.replace(/\r?\n/g, '<br>')}</div>
-                <div class="activity-actions-admin">
-                    <button onclick="editActivity('${act.id}')">แก้ไข</button>
-                    <button onclick="deleteActivity('${act.id}')">ลบ</button>
-                </div>
-            </div>
-        `;
-        });
+    activities.forEach(activity => {
+        const imagesHtml = (activity.images || []).map(img =>
+            `<img src="http://localhost:3000/uploads/activities/${img}" 
+        alt="activity" 
+        style="width:120px;max-width:120px;max-height:120px;object-fit:cover;border-radius:8px;margin:4px;cursor:pointer;"
+        onclick="showActivityDetail('${activity.id}', '${img}')">`
+        ).join('');
+        const card = document.createElement('div');
+        card.className = 'activity-card';
+        card.innerHTML = `
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">${imagesHtml}</div>
+      <div class="activity-desc">${activity.detail || ''}</div>
+      <button onclick="editActivity('${activity.id}')">แก้ไข</button>
+      <button onclick="deleteActivity('${activity.id}')">ลบ</button>
+    `;
+        gallery.appendChild(card);
+    });
 }
 
 // ลบกิจกรรม
@@ -159,9 +158,23 @@ window.onclick = function (event) {
 window.onload = () => {
     const activityForm = document.getElementById('activityForm');
     if (activityForm) {
-        activityForm.onsubmit = (event) => {
-            event.preventDefault();
-            handleSubmit('activityForm', 'http://localhost:3000/activities', 'activityGallery');
+        activityForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(activityForm);
+            document.getElementById('uploadLoading').style.display = 'inline';
+            try {
+                const res = await fetch('http://localhost:3000/activities', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!res.ok) throw new Error('Upload failed');
+                await res.json();
+                activityForm.reset();
+                renderActivityGallery();
+            } catch (err) {
+                alert('อัพโหลดกิจกรรมไม่สำเร็จ: ' + err.message);
+            }
+            document.getElementById('uploadLoading').style.display = 'none';
         };
     }
     const awardForm = document.getElementById('awardForm');
@@ -834,14 +847,14 @@ async function loadScheduleSection() {
 window.editActivity = editActivity;
 window.deleteActivity = deleteActivity;
 window.showActivityDetail = showActivityDetail;
-window.showVisitorModal = async function(visitorId, imgName) {
-  const res = await fetch('http://localhost:3000/visitors');
-  const visitors = await res.json();
-  const visitor = visitors.find(v => v.id === visitorId);
-  if (!visitor) return;
-  document.getElementById('visitorModalImg').src = `http://localhost:3000/uploads/visitors/${imgName}`;
-  document.getElementById('visitorModalDetail').innerHTML = visitor.detail || '';
-  document.getElementById('visitorModal').style.display = 'block';
+window.showVisitorModal = async function (visitorId, imgName) {
+    const res = await fetch('http://localhost:3000/visitors');
+    const visitors = await res.json();
+    const visitor = visitors.find(v => v.id === visitorId);
+    if (!visitor) return;
+    document.getElementById('visitorModalImg').src = `http://localhost:3000/uploads/visitors/${imgName}`;
+    document.getElementById('visitorModalDetail').innerHTML = visitor.detail || '';
+    document.getElementById('visitorModal').style.display = 'block';
 };
 document.getElementById('closeVisitorModal').onclick = function () {
     document.getElementById('visitorModal').style.display = 'none';
