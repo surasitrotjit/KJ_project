@@ -209,8 +209,11 @@ const awardStorage = multer.diskStorage({
 });
 const uploadAward = multer({ storage: awardStorage });
 
+const awardsFile = path.join(__dirname, '../Back-end/data/awards.json');
+
+// GET รางวัลทั้งหมด
 app.get('/awards', (req, res) => {
-  fs.readFile(path.join(__dirname, '../Back-end/data/awards.json'), (err, data) => {
+  fs.readFile(awardsFile, (err, data) => {
     if (err) return res.status(500).send('Error reading awards.json');
     try {
       res.json(JSON.parse(data));
@@ -220,28 +223,72 @@ app.get('/awards', (req, res) => {
   });
 });
 
+// POST เพิ่มรางวัล (รองรับ name)
 app.post('/awards', uploadAward.single('image'), (req, res) => {
-  const { detail, winner } = req.body;
+  const { name, detail } = req.body;
   const imagePath = '/uploads/award/' + req.file.filename;
-  const dataPath = path.join(__dirname, '../Back-end/data/awards.json');
   let awards = [];
-  if (fs.existsSync(dataPath)) {
+  if (fs.existsSync(awardsFile)) {
     try {
-      awards = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+      awards = JSON.parse(fs.readFileSync(awardsFile, 'utf8'));
     } catch (e) {
       awards = [];
     }
   }
-  const newItem = { name: winner, detail, imagePath };
+  // สร้าง id ใหม่เสมอ
+  const newItem = { id: Date.now().toString(), name, detail, imagePath };
   awards.push(newItem);
   try {
-    fs.writeFileSync(dataPath, JSON.stringify(awards, null, 2));
-    console.log('เขียนไฟล์ awards.json สำเร็จ');
+    fs.writeFileSync(awardsFile, JSON.stringify(awards, null, 2));
   } catch (e) {
-    console.error('เขียนไฟล์ awards.json ไม่สำเร็จ:', e);
     return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message });
   }
   res.json({ data: newItem });
+});
+
+// PUT แก้ไขรางวัล (รองรับ name)
+app.put('/awards/:id', express.json(), (req, res) => {
+  fs.readFile(awardsFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
+    let awards = [];
+    try {
+      awards = JSON.parse(data);
+    } catch (e) {
+      return res.status(500).json({ error: 'ไฟล์ awards.json ไม่ถูกต้อง' });
+    }
+    const idx = awards.findIndex(a => a.id == req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'ไม่พบรางวัล' });
+    awards[idx] = { ...awards[idx], ...req.body, id: awards[idx].id };
+    fs.writeFile(awardsFile, JSON.stringify(awards, null, 2), err2 => {
+      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
+      res.json({ success: true, award: awards[idx] });
+    });
+  });
+});
+
+// DELETE รางวัล
+app.delete('/awards/:id', (req, res) => {
+  fs.readFile(awardsFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'อ่านไฟล์ไม่ได้' });
+    let awards = [];
+    try {
+      awards = JSON.parse(data);
+    } catch (e) {
+      return res.status(500).json({ error: 'ไฟล์ awards.json ไม่ถูกต้อง' });
+    }
+    const idx = awards.findIndex(a => a.id == req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'ไม่พบรางวัล' });
+    // ลบไฟล์ภาพถ้ามี
+    if (awards[idx].imagePath) {
+      const imgPath = path.join(__dirname, '../Back-end', awards[idx].imagePath.replace(/^\//, ''));
+      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+    }
+    awards.splice(idx, 1);
+    fs.writeFile(awardsFile, JSON.stringify(awards, null, 2), err2 => {
+      if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
+      res.json({ success: true });
+    });
+  });
 });
 
 // ----------------- นักเรียน (Students) -----------------

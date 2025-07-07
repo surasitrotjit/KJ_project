@@ -15,12 +15,13 @@ window.showSection = function (sectionId) {
 // Function to add a newly uploaded item to the gallery
 function addItemToGallery(galleryId, data) {
     if (!data || !data.imagePath || !data.detail) return;
+    const gallery = document.getElementById(galleryId); // เพิ่มบรรทัดนี้
+    if (!gallery) return;
     const card = document.createElement('div');
     card.className = 'activity-card';
     card.innerHTML = `
     <img src="http://localhost:3000${data.imagePath}" alt="รูปภาพ" class="activity-image">
     <div class="activity-info">
-        ${data.name ? `<div><b>${data.name}</b></div>` : ""}
         ${data.detail}
     </div>
     <a href="#" class="activity-btn">ดูเพิ่มเติม</a>
@@ -566,8 +567,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     loadLatestItems('http://localhost:3000/activities', 'activityGallery');
-    loadLatestItems('http://localhost:3000/award', 'awardGallery');
-    loadLatestItems('http://localhost:3000/visitor', 'visitorGallery');
+    loadLatestItems('http://localhost:3000/awards', 'awardGallery');
+    loadLatestItems('http://localhost:3000/visitors', 'visitorGallery');
 });
 
 // นักเรียน: แสดงตารางนักเรียน (แบบสรุป)
@@ -860,7 +861,6 @@ async function renderAwardGallery() {
     if (!gallery) return;
     const res = await fetch('http://localhost:3000/awards');
     let awards = await res.json();
-    // เพิ่ม id ให้กับรางวัลที่ไม่มี id (ใช้ index + 1)
     awards = awards.map((a, idx) => {
         if (!a.id) {
             return { ...a, id: (idx + 1).toString() };
@@ -868,21 +868,17 @@ async function renderAwardGallery() {
         return a;
     });
     gallery.innerHTML = '';
-    // กรองเฉพาะรางวัลที่มี detail จริงเท่านั้น
     const validAwards = awards.filter(a => a && a.detail && a.detail.trim() !== '');
     if (!validAwards.length) {
         gallery.innerHTML = '<p style="color:red;text-align:center;">ไม่พบข้อมูลรางวัลที่สมบูรณ์</p>';
         return;
     }
     validAwards.forEach(award => {
-        // debug id
-        console.log('award id:', award.id, award);
         const imgSrc = award.imagePath ? `http://localhost:3000${award.imagePath}` : 'https://cdn-icons-png.flaticon.com/512/190/190411.png';
         gallery.innerHTML += `
             <div class="award-card-admin">
                 <img src="${imgSrc}" alt="award" class="award-img-admin">
                 <div class="award-detail-admin">${award.detail.replace(/\r?\n/g, '<br>')}</div>
-                <div class="award-winner-admin"><b>${award.name || award.winner || ''}</b></div>
                 <div class="award-actions-admin">
                     <button onclick="editAward('${award.id}')">แก้ไข</button>
                     <button onclick="deleteAward('${award.id}')">ลบ</button>
@@ -893,8 +889,6 @@ async function renderAwardGallery() {
 }
 
 window.deleteAward = async function (id) {
-    // debug id
-    alert('จะลบ award id: ' + id);
     if (!confirm('ยืนยันการลบรางวัลนี้?')) return;
     const res = await fetch(`http://localhost:3000/awards/${id}`, { method: 'DELETE' });
     if (res.ok) {
@@ -919,11 +913,10 @@ window.editAward = async function (id) {
     if (!award) return alert('ไม่พบข้อมูลรางวัล');
     const newDetail = prompt('แก้ไขรายละเอียดรางวัล:', award.detail);
     if (newDetail !== null && newDetail !== award.detail) {
-        // ส่งข้อมูลใหม่ไปยัง backend พร้อม id
         const updateRes = await fetch(`http://localhost:3000/awards/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...award, detail: newDetail, id: id })
+            body: JSON.stringify({ id: id, detail: newDetail, imagePath: award.imagePath })
         });
         if (updateRes.ok) {
             alert('แก้ไขรางวัลสำเร็จ!');
@@ -933,3 +926,23 @@ window.editAward = async function (id) {
         }
     }
 };
+
+document.getElementById('awardForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  fetch('http://localhost:3000/awards', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('awardFormMsg').textContent = 'เพิ่มรางวัลสำเร็จ!';
+    form.reset();
+    // โหลดรางวัลใหม่ (ถ้ามีฟังก์ชัน)
+    if (typeof loadAwards === 'function') loadAwards();
+  })
+  .catch(err => {
+    document.getElementById('awardFormMsg').textContent = 'เกิดข้อผิดพลาด';
+  });
+});

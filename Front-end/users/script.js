@@ -577,8 +577,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     loadLatestItems('http://localhost:3000/activities', 'activityGallery');
-    loadLatestItems('http://localhost:3000/award', 'awardGallery');
-    loadLatestItems('http://localhost:3000/visitor', 'visitorGallery');
+    loadLatestItems('http://localhost:3000/awards', 'awardGallery');
+    loadLatestItems('http://localhost:3000/visitors', 'visitorGallery');
 });
 
 // นักเรียน: แสดงตารางนักเรียน (แบบสรุป)
@@ -844,24 +844,91 @@ async function loadScheduleSection() {
     };
 }
 
-window.editActivity = editActivity;
-window.deleteActivity = deleteActivity;
-window.showActivityDetail = showActivityDetail;
-window.showVisitorModal = async function (visitorId, imgName) {
-    const res = await fetch('http://localhost:3000/visitors');
-    const visitors = await res.json();
-    const visitor = visitors.find(v => v.id === visitorId);
-    if (!visitor) return;
-    document.getElementById('visitorModalImg').src = `http://localhost:3000/uploads/visitors/${imgName}`;
-    document.getElementById('visitorModalDetail').innerHTML = visitor.detail || '';
-    document.getElementById('visitorModal').style.display = 'block';
-};
-document.getElementById('closeVisitorModal').onclick = function () {
-    document.getElementById('visitorModal').style.display = 'none';
-};
-window.onclick = function (event) {
-    const modal = document.getElementById('visitorModal');
-    if (event.target === modal) {
-        modal.style.display = 'none';
+// --- Award Section --- (Admin CRUD)
+
+// โหลดรางวัลทั้งหมด
+async function loadAwards() {
+    const res = await fetch('http://localhost:3000/awards');
+    return await res.json();
+}
+
+// แสดงรางวัลทั้งหมด (admin: มีปุ่มแก้ไข/ลบ)
+async function renderAwardGallery() {
+    const gallery = document.getElementById('awardGallery');
+    if (!gallery) return;
+    gallery.innerHTML = '<div>กำลังโหลด...</div>';
+    const awards = await loadAwards();
+    gallery.innerHTML = '';
+    awards.forEach(award => {
+        const card = document.createElement('div');
+        card.className = 'award-card';
+        card.innerHTML = `
+            <img src="http://localhost:3000${award.imagePath}" alt="รางวัล" class="award-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin:4px;">
+            <div class="award-detail">${award.detail || ''}</div>
+            <div style="margin-top:8px;">
+                <button onclick="editAward('${award.id}')">แก้ไข</button>
+                <button onclick="deleteAward('${award.id}')">ลบ</button>
+            </div>
+        `;
+        gallery.appendChild(card);
+    });
+}
+
+// เพิ่มรางวัลใหม่ (form POST)
+window.addAward = async function (e) {
+    e.preventDefault();
+    const form = document.getElementById('awardForm');
+    const formData = new FormData(form);
+    const res = await fetch('http://localhost:3000/awards', {
+        method: 'POST',
+        body: formData
+    });
+    if (res.ok) {
+        alert('เพิ่มรางวัลสำเร็จ');
+        form.reset();
+        renderAwardGallery();
+    } else {
+        alert('เกิดข้อผิดพลาดในการเพิ่มรางวัล');
     }
 };
+
+// ลบรางวัล
+window.deleteAward = async function (id) {
+    if (!confirm('ยืนยันการลบรางวัลนี้?')) return;
+    const res = await fetch(`http://localhost:3000/awards/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+        alert('ลบสำเร็จ');
+        renderAwardGallery();
+    } else {
+        alert('เกิดข้อผิดพลาดในการลบ');
+    }
+};
+
+// แก้ไขรางวัล (prompt detail ใหม่)
+window.editAward = async function (id) {
+    const awards = await loadAwards();
+    const award = awards.find(a => a.id == id);
+    if (!award) return alert('ไม่พบรางวัล');
+    const newDetail = prompt('แก้ไขรายละเอียดรางวัล:', award.detail);
+    if (newDetail !== null && newDetail !== award.detail) {
+        const res = await fetch(`http://localhost:3000/awards/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ detail: newDetail })
+        });
+        if (res.ok) {
+            alert('แก้ไขสำเร็จ');
+            renderAwardGallery();
+        } else {
+            alert('เกิดข้อผิดพลาดในการแก้ไข');
+        }
+    }
+};
+
+// เชื่อมฟอร์มกับ addAward
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('awardGallery')) renderAwardGallery();
+    const awardForm = document.getElementById('awardForm');
+    if (awardForm) awardForm.onsubmit = addAward;
+});
