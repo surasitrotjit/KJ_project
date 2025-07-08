@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
     <meta charset="UTF-8" />
     <title>Login</title>
-    <link rel="stylesheet" href="../main/login.css" />
+    <link rel="stylesheet" href="login.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
@@ -23,17 +23,7 @@
     </div>
 
     <script>
-        const users = {
-            user01: { password: "1234", role: "Licensee" },
-            user02: { password: "2345", role: "Director" },
-            user03: { password: "3456", role: "Medic" },
-            user04: { password: "4567", role: "Teacher" },
-            user05: { password: "5678", role: "Registrar" },
-            user06: { password: "6789", role: "Administrator" },
-            user07: { password: "7890", role: "Parents" }
-        };
-
-        function login() {
+        async function login() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
 
@@ -47,60 +37,73 @@
                 return;
             }
 
-            const user = users[username];
-
-            if (!user) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'ไม่พบชื่อผู้ใช้',
-                    text: `ชื่อผู้ใช้ "${username}" ไม่มีในระบบ`,
-                    confirmButtonText: 'ลองใหม่'
+            try {
+                const res = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
                 });
-                return;
-            }
 
-            if (user.password !== password) {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เข้าสู่ระบบล้มเหลว',
+                        text: data.message || 'เกิดข้อผิดพลาด',
+                        confirmButtonText: 'ลองใหม่'
+                    });
+                    return;
+                }
+
+                // เก็บ token และ role ไว้ใน localStorage
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.role);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'เข้าสู่ระบบสำเร็จ',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    const role = data.role;
+
+                    // Map role → HTML path
+                    const roleToPage = {
+                        Administrator: "../users/Admin.html",
+                        Director: "../users/Director.html",
+                        Teacher: "../users/Teacher.html",
+                        Parents: "../users/Parents.html",
+                        Medic: "../users/Medic.html",
+                        Registrar: "../users/Registrar.html",
+                        Licensee: "../users/Licensee.html"
+                    };
+                    if (roleToPage[role]) {
+                        window.location.href = roleToPage[role];
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'ไม่สามารถเข้าสู่ระบบได้',
+                            text: `ไม่พบหน้า HTML สำหรับ role "${role}"`,
+                            confirmButtonText: 'ตกลง'
+                        });
+                    }
+                });
+            } catch (error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'รหัสผ่านไม่ถูกต้อง',
-                    text: 'โปรดตรวจสอบรหัสผ่านของคุณอีกครั้ง',
+                    title: 'เกิดข้อผิดพลาด',
+                    text: error.message || 'โปรดลองใหม่',
                     confirmButtonText: 'ตกลง'
                 });
-                return;
             }
-
-            // ✅ ล็อกอินสำเร็จ
-            Swal.fire({
-                icon: 'success',
-                title: 'เข้าสู่ระบบสำเร็จ',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                const role = user.role;
-                if (role === "Administrator") {
-                    localStorage.setItem('lastSection', 'studentTableSection'); // เพิ่มตรงนี้
-                    window.location.href = "../../Front-end/users/Admin.html";
-                } else if (role === "Licensee") {
-                    window.location.href = "../../Front-end/users/Licensee.html";
-                } else if (role === "Director") {
-                    window.location.href = "../../Front-end/users/Director.html";
-                } else if (role === "Medic") {
-                    window.location.href = "../../Front-end/users/Medic.html";
-                } else if (role === "Registrar") {
-                    window.location.href = "../../Front-end/users/Registrar.html";
-                } else if (role === "Parents") {
-                    window.location.href = "../../Front-end/users/Parents.html";
-                } else if (role === "Teacher") {
-                    window.location.href = "../../Front-end/users/Teacher.html";
-                }
-            });
         }
-    </script>
-    <script>
-        document.getElementById("username").addEventListener("keydown", function (e) {
+
+        // Enter เพื่อ login
+        document.getElementById("username").addEventListener("keydown", e => {
             if (e.key === "Enter") login();
         });
-        document.getElementById("password").addEventListener("keydown", function (e) {
+        document.getElementById("password").addEventListener("keydown", e => {
             if (e.key === "Enter") login();
         });
     </script>
