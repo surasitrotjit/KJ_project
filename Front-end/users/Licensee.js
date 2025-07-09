@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadStudentData();
-  loadNews();
   setupFormHandlers();
+  setupAddStudentForm();
 });
 
 // โหลดรายชื่อนักเรียน
@@ -53,30 +53,7 @@ function showSection(id) {
   }
 }
 
-// โหลดข่าวสารจาก API
-function loadNews() {
-  fetch("http://localhost:3000/news")
-    .then((response) => response.json())
-    .then((data) => {
-      const newsList = document.getElementById("newsList");
-      newsList.innerHTML = "";
-
-      if (data.news && data.news.length > 0) {
-        data.news.forEach((item) => {
-          const li = document.createElement("li");
-          li.innerHTML = `<strong>${item.title}</strong><br>${item.detail}`;
-          newsList.appendChild(li);
-        });
-      } else {
-        newsList.innerHTML = "<li>ยังไม่มีข่าวสาร</li>";
-      }
-    })
-    .catch((error) => {
-      console.error("โหลดข่าวไม่สำเร็จ:", error);
-    });
-}
-
-// จัดการส่งฟอร์มข่าวสาร
+// จัดการส่งฟอร์มข่าวสาร (ไม่ใช้ในหน้า Licensee แต่คงไว้เผื่ออนาคต)
 function setupFormHandlers() {
   const newsForm = document.getElementById("newsForm");
   if (newsForm) {
@@ -105,7 +82,6 @@ function setupFormHandlers() {
         })
         .then(() => {
           newsForm.reset();
-          loadNews();
           alert("บันทึกข่าวสารเรียบร้อยแล้ว");
         })
         .catch((error) => {
@@ -114,4 +90,57 @@ function setupFormHandlers() {
         });
     });
   }
+}
+
+// ฟังก์ชันสำหรับจัดการการเพิ่มนักเรียน
+function setupAddStudentForm() {
+  const form = document.getElementById("addStudentForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const studentId = form.querySelector("#studentId").value.trim();
+    const firstName = form.querySelector("#firstName").value.trim();
+    const lastName = form.querySelector("#lastName").value.trim();
+    const nickname = form.querySelector("#nickname").value.trim();
+    const className = form.querySelector("#class").value;
+
+    if (!studentId || !firstName || !lastName || !nickname || !className) {
+      alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      return;
+    }
+
+    const studentData = {
+      studentId,
+      firstName,
+      lastName,
+      nickname,
+      class: className
+    };
+
+    fetch("http://localhost:3000/students", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(studentData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("ไม่สามารถเพิ่มนักเรียนได้");
+        }
+        return response.json();
+      })
+      .then(() => {
+        alert("เพิ่มนักเรียนสำเร็จแล้ว");
+        form.reset();
+        loadStudentData();
+        showSection("overview");
+      })
+      .catch((error) => {
+        console.error("เกิดข้อผิดพลาด:", error);
+        alert("เกิดข้อผิดพลาดในการเพิ่มนักเรียน");
+      });
+  });
 }

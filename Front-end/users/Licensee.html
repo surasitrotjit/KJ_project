@@ -26,7 +26,7 @@
         <details open>
           <summary>เมนูผู้รับใบอนุญาต</summary>
           <button onclick="showSection('overview')">รายชื่อนักเรียน</button>
-          <!-- <button onclick="showSection('news')">ข่าวสารโรงเรียน</button> -->
+          <button onclick="showSection('addStudent')">เพิ่มนักเรียน</button>
         </details>
       </nav>
     </aside>
@@ -49,21 +49,31 @@
         </table>
       </section>
 
-      <!-- ข่าวสารโรงเรียน -->
-      <!-- <section id="news" class="content-section hidden">
-        <h2>ข่าวสารโรงเรียน</h2>
-        <form id="newsForm">
-          <label for="newsTitle">หัวข้อข่าว:</label>
-          <input type="text" id="newsTitle" name="title" required />
+      <!-- เพิ่มนักเรียน -->
+      <section id="addStudent" class="content-section hidden">
+        <h2>เพิ่มนักเรียน</h2>
+        <form id="addStudentForm">
 
-          <label for="newsDetail">รายละเอียด:</label>
-          <textarea id="newsDetail" name="detail" required></textarea>
+          <label for="firstName">ชื่อ:</label>
+          <input type="text" id="firstName" name="firstName" required />
 
-          <button type="submit">บันทึก</button>
+          <label for="lastName">นามสกุล:</label>
+          <input type="text" id="lastName" name="lastName" required />
+
+          <label for="class">ชั้นเรียน:</label>
+          <select id="class" name="class" required>
+            <option value="">-- เลือกชั้นเรียน --</option>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1">ป.1</option>
+            <option value="ป.2">ป.2</option>
+            <option value="ป.3">ป.3</option>
+          </select>
+
+          <button type="submit">เพิ่มนักเรียน</button>
         </form>
-
-        <ul id="newsList"></ul>
-      </section> -->
+      </section>
     </main>
   </div>
 </body>

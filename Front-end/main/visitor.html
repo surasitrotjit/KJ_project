@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ประวัติโรงเรียน</title>
+  <title>ผู้มาเยี่ยมชม</title>
   <link rel="stylesheet" href="main.css" />
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
+
 <body>
   <div class="overlay" id="overlay"></div>
 
@@ -28,7 +30,8 @@
       <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
       <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
       <a href="Activity.html" class="menu-item"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
-      <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item"><i class="fas fa-comments"></i><span>ถาม-ตอบ</span></a>
+      <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item"><i
+          class="fas fa-comments"></i><span>ถาม-ตอบ</span></a>
       <a href="news.html" class="menu-item"><i class="fas fa-book-open"></i><span>ข่าวสารทั่วไป</span></a>
       <a href="contact.html" class="menu-item"><i class="fas fa-phone"></i><span>ติดต่อ</span></a>
     </nav>
@@ -65,80 +68,67 @@
           <div class="bell-icon">🔔</div>
           <div>ผู้มาเยี่ยมชม</div>
         </div>
-      
+
         <div class="logo-center">
           <img src="../Image/logo.png" alt="โลโก้">
         </div>
-      
+
         <div class="visitors-gallery">
-          <!-- JS จะเติมข้อมูลที่นี่ -->
+          <!-- จะถูกเติมโดย JavaScript -->
         </div>
-      
-        <!-- ✅ Footer อยู่ภายใน visitors-section -->
+
         <footer>
           <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
           <div class="school-address">1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110</div>
           <div class="school-contact">Tel. : 074-257884, Fax : 074-258107, E-mail : Kunlajin@gmail.com</div>
         </footer>
       </div>
-      
-      <!-- ✅ Popup แสดงเนื้อหา -->
-      <div id="popup" class="popup-overlay-popup" onclick="closePopup(event)">
+
+      <!-- ✅ Popup หลัก -->
+      <div id="popup" class="popup-overlay-popup" style="display: none;" onclick="closePopup(event)">
         <div class="popup-content-popup">
           <span class="close-btn-popup" onclick="closePopup(event)">&times;</span>
           <div class="visitors-text" id="popupText" style="text-align: center; margin-bottom: 20px;"></div>
           <div class="popup-gallery" id="popupGallery"></div>
         </div>
       </div>
-      
-      <!-- ✅ Popup แสดงรูปใหญ่ -->
-      <div id="fullImagePopup" class="popup-overlay-popup" onclick="closeFullImage(event)" style="display:none;">
+
+      <!-- ✅ Popup รูปใหญ่ -->
+      <div id="fullImagePopup" class="popup-overlay-popup" onclick="closeFullImage(event)" style="display: none;">
         <div class="popup-content-full">
           <span class="close-btn-popup" onclick="closeFullImage(event)">&times;</span>
           <img id="fullImage" src="" alt="รูปขยาย" class="full-img">
         </div>
       </div>
-      
-      <!-- ✅ JavaScript -->
+
       <script>
-        // ===== Sidebar Functions =====
+        // ====== Sidebar ======
         const sidebarBtn = document.getElementById('sidebarBtn');
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-      
+
         function openSidebar() {
           sidebar.classList.add('active');
           overlay.style.display = 'block';
         }
-      
+
         function closeSidebar() {
           sidebar.classList.remove('active');
           overlay.style.display = 'none';
         }
-      
+
         sidebarBtn?.addEventListener('click', openSidebar);
         hamburgerBtn?.addEventListener('click', openSidebar);
         closeSidebarBtn?.addEventListener('click', closeSidebar);
         overlay?.addEventListener('click', closeSidebar);
-      
-        window.addEventListener('scroll', function () {
-          const header = document.querySelector('header');
-          if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-          } else {
-            header.classList.remove('scrolled');
-          }
-        });
 
-        // ===== ดึงข้อมูล visitors.json และแสดงผล =====
+        // ====== โหลด visitor จาก JSON ======
         async function loadVisitors() {
           try {
-            // ปรับ path ให้ตรงกับ backend ที่ให้บริการ
-            const res = await fetch('/data/visitors.json');
+            const res = await fetch('../data/visitors.json');
             const visitors = await res.json();
-
             const gallery = document.querySelector('.visitors-gallery');
             gallery.innerHTML = '';
 
@@ -148,52 +138,43 @@
             }
 
             visitors.forEach(visitor => {
-              // สมมติ visitor.images เป็น array ของชื่อไฟล์ เช่น ["img1.jpg","img2.jpg"]
               const images = (visitor.images || []).map(img => `../visitors/${img}`).join(',');
 
               const item = document.createElement('div');
               item.className = 'visitors-item';
-              item.setAttribute('data-title', visitor.title || '');
-              item.setAttribute('data-desc', visitor.desc || '');
+              item.setAttribute('data-desc', visitor.detail || '');
               item.setAttribute('data-images', images);
 
-              // รูปแรกเป็นรูปหลัก
               const mainImg = document.createElement('img');
               mainImg.className = 'visitors-img';
-              mainImg.src = visitor.images && visitor.images.length > 0 ? `../visitors/${visitor.images[0]}` : '../Image/logo.png';
-              mainImg.alt = visitor.title || '';
-              mainImg.onclick = function() { openPopup(this); };
+              mainImg.src = visitor.images && visitor.images.length > 0
+                ? `../visitors/${visitor.images[0]}`
+                : '../Image/logo.png';
+              mainImg.alt = visitor.detail || '';
+              mainImg.onclick = () => showPopup(item);
 
-              const textDiv = document.createElement('div');
-              textDiv.className = 'visitors-text';
-              textDiv.textContent = visitor.desc || '';
+              const caption = document.createElement('div');
+              caption.className = 'visitors-text';
+              caption.textContent = visitor.detail || '';
 
               item.appendChild(mainImg);
-              item.appendChild(textDiv);
-
+              item.appendChild(caption);
               gallery.appendChild(item);
             });
-          } catch (err) {
+          } catch (e) {
             document.querySelector('.visitors-gallery').innerHTML = '<div style="color:red;">ไม่สามารถโหลดข้อมูลผู้เยี่ยมชมได้</div>';
           }
         }
 
-        // เรียกใช้เมื่อโหลดหน้าเสร็จ
-        window.addEventListener('DOMContentLoaded', loadVisitors);
-
-        // ===== Visitors Popup Functions =====
-        function openPopup(clickedImg) {
-          const parentItem = clickedImg.closest('.visitors-item');
-          const desc = parentItem.getAttribute('data-desc') || '';
-          const imagesStr = parentItem.getAttribute('data-images') || '';
-          const imagePaths = imagesStr.split(',').filter(Boolean);
+        function showPopup(item) {
+          const desc = item.getAttribute('data-desc') || '';
+          const images = item.getAttribute('data-images').split(',').filter(Boolean);
 
           document.getElementById('popupText').textContent = desc;
-
           const gallery = document.getElementById('popupGallery');
-          gallery.innerHTML = ''; // Clear previous images
+          gallery.innerHTML = '';
 
-          imagePaths.forEach((src) => {
+          images.forEach(src => {
             const img = document.createElement('img');
             img.src = src.trim();
             img.className = 'popup-img';
@@ -203,24 +184,28 @@
 
           document.getElementById('popup').style.display = 'flex';
         }
-      
+
         function closePopup(event) {
           if (event.target.classList.contains('popup-overlay-popup') || event.target.classList.contains('close-btn-popup')) {
             document.getElementById('popup').style.display = 'none';
           }
         }
-      
+
         function openFullImage(src) {
           document.getElementById('fullImage').src = src;
           document.getElementById('fullImagePopup').style.display = 'flex';
         }
-      
+
         function closeFullImage(event) {
           if (event.target.classList.contains('popup-overlay-popup') || event.target.classList.contains('close-btn-popup')) {
             document.getElementById('fullImagePopup').style.display = 'none';
           }
         }
+
+        window.addEventListener('DOMContentLoaded', loadVisitors);
       </script>
-      
+    </div>
+  </div>
 </body>
-  </html>
+
+</html>
