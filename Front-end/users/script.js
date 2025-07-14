@@ -281,16 +281,38 @@ document.addEventListener('DOMContentLoaded', () => {
 // ข่าวสาร: จัดการข่าว (เพิ่มข่าวใหม่ในหน้า)
 const newsForm = document.getElementById('newsForm');
 const newsList = document.getElementById('newsList');
+
 if (newsForm && newsList) {
-    newsForm.onsubmit = (e) => {
+    newsForm.onsubmit = async (e) => {
         e.preventDefault();
+
         const title = newsForm.title.value.trim();
-        const detail = newsForm.detail.value.trim();
+        const detail = newsForm.detail.value.trim(); // ใช้ชื่อเดียวกับ backend คือ content
+
         if (!title || !detail) return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-        const li = document.createElement('li');
-        li.textContent = `${title}: ${detail}`;
-        newsList.prepend(li);
-        newsForm.reset();
+
+        try {
+            const res = await fetch('http://localhost:3000/news', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, detail })
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+                const li = document.createElement('li');
+                li.textContent = `${result.news.title}: ${result.news.content}`;
+                newsList.prepend(li);
+                newsForm.reset();
+            } else {
+                alert(result.error || 'เกิดข้อผิดพลาด');
+            }
+        } catch (error) {
+            console.error('เกิดข้อผิดพลาด:', error);
+            alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+        }
     };
 }
 
@@ -931,4 +953,132 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('awardGallery')) renderAwardGallery();
     const awardForm = document.getElementById('awardForm');
     if (awardForm) awardForm.onsubmit = addAward;
+});
+
+async function loadNews() {
+  const res = await fetch('http://localhost:3000/news');
+  const data = await res.json();
+  const tableBody = document.querySelector('#newsTable tbody');
+  tableBody.innerHTML = '';
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${item.title}</td>
+      <td>${item.detail}</td>
+      <td>
+        <button onclick="editNews('${item.id}')">แก้ไข</button>
+        <button onclick="deleteNews('${item.id}')">ลบ</button>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+async function addNews() {
+    const title = document.getElementById('titleInput').value;
+    const detail = document.getElementById('detailInput').value;
+
+    await fetch('http://localhost:3000/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, detail })
+    });
+
+    loadNews(); // รีโหลดข้อมูลใหม่
+}
+
+async function editNews(id) {
+    const newTitle = prompt('หัวข้อข่าวใหม่:');
+    const newDetail = prompt('รายละเอียดข่าวใหม่:');
+    if (!newTitle || !newDetail) return;
+
+    await fetch(`http://localhost:3000/news/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle, detail: newDetail })
+    });
+
+    loadNews();
+}
+
+async function deleteNews(id) {
+  if (!confirm('คุณต้องการลบข่าวนี้ใช่หรือไม่?')) return;
+
+  const res = await fetch(`http://localhost:3000/news/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (res.ok) {
+    loadNews(); // โหลดใหม่หลังลบ
+  } else {
+    alert('ลบไม่สำเร็จ');
+  }
+}
+
+window.onload = () => {
+  loadNews();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const newsForm = document.getElementById("newsForm");
+  const newsList = document.getElementById("newsList");
+
+  async function loadNews() {
+    const res = await fetch('http://localhost:3000/news');
+    const news = await res.json();
+    renderNews(news);
+  }
+
+  function renderNews(newsArray) {
+    newsList.innerHTML = '';
+    newsArray.forEach(item => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${item.title}</strong>: ${item.detail}
+        <button onclick="editNews(${item.id}, '${item.title}', \`${item.detail}\`)">แก้ไข</button>
+        <button onclick="deleteNews(${item.id})">ลบ</button>
+      `;
+      newsList.appendChild(li);
+    });
+  }
+
+  newsForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const title = newsForm.title.value.trim();
+    const detail = newsForm.detail.value.trim();
+    if (!title || !detail) return alert('กรุณากรอกข้อมูลให้ครบ');
+
+    const res = await fetch('http://localhost:3000/news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, detail })
+    });
+
+    if (res.ok) {
+      newsForm.reset();
+      loadNews();
+    }
+  });
+
+  window.deleteNews = async function (id) {
+    if (!confirm("ต้องการลบข่าวนี้หรือไม่?")) return;
+    const res = await fetch(`http://localhost:3000/news/${id}`, { method: 'DELETE' });
+    if (res.ok) loadNews();
+  };
+
+  window.editNews = async function (id, oldTitle, oldDetail) {
+    const title = prompt("แก้ไขหัวข้อข่าว:", oldTitle);
+    const detail = prompt("แก้ไขรายละเอียด:", oldDetail);
+    if (title && detail) {
+      const res = await fetch(`http://localhost:3000/news/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, detail })
+      });
+      if (res.ok) loadNews();
+    }
+  };
+
+  loadNews();
 });

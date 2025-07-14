@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,6 +25,7 @@
       box-sizing: border-box;
       font-family: 'Kanit', sans-serif;
     }
+
     body {
       margin: 0;
       background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
@@ -34,6 +36,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     h1 {
       text-align: center;
       margin: 40px 0 10px;
@@ -54,28 +57,70 @@
     }
 
     /* Card Container */
-    .award-item {
-      width: 100%;
-      max-width: 280px;
-      height: 320px;
-      border-radius: 18px;
-      box-shadow: 0 10px 25px var(--shadow-light);
-      background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
-      transition: 
-        box-shadow 0.3s ease, 
-        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      cursor: pointer;
-      opacity: 0;
-      transform: translateY(30px);
-      user-select: none;
-    }
+    /* Card style from Uiverse.io by david-mohseni */
+.card {
+  width: 190px;
+  height: 120px;
+  background-color: #eee;
+  text-align: center;
+  border: 10px solid #eee;
+  border-radius: 20px;
+  box-shadow: inset 5px 5px 10px #bbb, inset -5px -5px 10px #fff;
+  transition: 0.5s;
+  margin: 0 auto;
+}
+
+.card:hover {
+  height: 254px;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  font-size: 30px;
+  background-color: #eee;
+  margin: 20px auto;
+  padding: 5px;
+  border-radius: 50%;
+  box-shadow: 8px 8px 10px #ddd, -8px -8px 10px #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  color: #555;
+  background-color: #eee;
+  padding: 10px;
+  margin: 5px 20px;
+  border-radius: 8px;
+  box-shadow: 8px 8px 10px #ddd, -8px -8px 10px #fff;
+  transform: translateY(-80px) scale(0);
+  transition: all 0.5s;
+}
+
+.card:hover .content {
+  transform: translateY(0) scale(1)
+}
+
+.content h3 {
+  text-shadow: 2px 2px 0px #fff;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.content p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
     /* Reveal */
     .award-item.visible {
       opacity: 1;
       transform: translateY(0);
       transition-delay: 0.15s;
     }
+
     /* Hover effect */
     .award-item:hover {
       transform: translateY(-12px) scale(1.05);
@@ -90,15 +135,16 @@
       border-radius: 15px;
       object-fit: contain;
       margin: 20px auto 18px;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
       background: white;
       padding: 8px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: block;
     }
+
     .award-item:hover .award-img {
       transform: scale(1.07);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
     }
 
     /* Gradient Shimmer Text */
@@ -118,10 +164,12 @@
       letter-spacing: 0.5px;
       user-select: text;
     }
+
     @keyframes shimmer {
       0% {
         background-position: 200% 0;
       }
+
       100% {
         background-position: -200% 0;
       }
@@ -151,6 +199,7 @@
       font-weight: 700;
       user-select: none;
     }
+
     .bell-icon {
       font-size: 28px;
     }
@@ -162,17 +211,20 @@
       .award-item {
         height: 280px;
       }
+
       .award-img {
         width: 110px;
         height: 110px;
         margin-bottom: 12px;
       }
+
       .award-name {
         font-size: 1.1rem;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- Overlay -->
   <div class="overlay" id="overlay"></div>
@@ -248,88 +300,95 @@
   </div>
 
   <script>
-  // Sidebar toggle
-  const sidebarBtn = document.getElementById('sidebarBtn');
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
+    // Sidebar toggle
+    const sidebarBtn = document.getElementById('sidebarBtn');
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-  function openSidebar() {
-    sidebar.classList.add('active');
-    overlay.style.display = 'block';
-  }
-  function closeSidebar() {
-    sidebar.classList.remove('active');
-    overlay.style.display = 'none';
-  }
-
-  sidebarBtn.addEventListener('click', openSidebar);
-  hamburgerBtn.addEventListener('click', openSidebar);
-  closeSidebarBtn.addEventListener('click', closeSidebar);
-  overlay.addEventListener('click', closeSidebar);
-
-  window.addEventListener('scroll', () => {
-    const header = document.querySelector('header');
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    function openSidebar() {
+      sidebar.classList.add('active');
+      overlay.style.display = 'block';
     }
-  });
+    function closeSidebar() {
+      sidebar.classList.remove('active');
+      overlay.style.display = 'none';
+    }
 
-  // Fetch awards data
-  fetch('http://localhost:3000/awards')
-    .then(res => res.json())
-    .then(data => {
-      const gallery = document.getElementById('awardGallery');
-      gallery.innerHTML = '';
+    sidebarBtn.addEventListener('click', openSidebar);
+    hamburgerBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
 
-      if (!Array.isArray(data) || data.length === 0) {
-        gallery.innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
-        return;
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
       }
+    });
 
-      data.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.className = 'award-item';
-        div.style.transitionDelay = `${idx * 0.1}s`;
+    // Fetch awards data
+    fetch('http://localhost:3000/awards')
+      .then(res => res.json())
+      .then(data => {
+        const gallery = document.getElementById('awardGallery');
+        gallery.innerHTML = '';
 
-        // ตรวจสอบ imagePath ว่ามีหรือไม่
-        let imgSrc = '';
-        if (item.imagePath) {
-          imgSrc = item.imagePath.startsWith('http')
-            ? item.imagePath
-            : `http://localhost:3000${item.imagePath}`;
-        } else {
-          imgSrc = 'https://cdn-icons-png.flaticon.com/512/190/190411.png'; // รูป default
+        if (!Array.isArray(data) || data.length === 0) {
+          gallery.innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
+          return;
         }
 
-        div.innerHTML = `
-          <img loading="lazy" class="award-img" src="${imgSrc}" alt="รางวัล" />
-          <div class="award-name">${item.name ? item.name : 'ไม่ระบุชื่อรางวัล'}</div>
-          <div class="award-detail">${item.detail ? item.detail : 'ไม่มีรายละเอียดเพิ่มเติม'}</div>
-        `;
-        gallery.appendChild(div);
-      });
+        data.forEach((item, idx) => {
+          const div = document.createElement('div');
+          div.className = 'award-item';
+          div.style.transitionDelay = `${idx * 0.1}s`;
 
-      // Scroll reveal effect
-      const cards = document.querySelectorAll('.award-item');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
+          // ตรวจสอบ imagePath ว่ามีหรือไม่
+          let imgSrc = '';
+          if (item.imagePath) {
+            imgSrc = item.imagePath.startsWith('http')
+              ? item.imagePath
+              : `http://localhost:3000${item.imagePath}`;
+          } else {
+            imgSrc = 'https://cdn-icons-png.flaticon.com/512/190/190411.png'; // รูป default
           }
-        });
-      }, { threshold: 0.1 });
 
-      cards.forEach(card => observer.observe(card));
-    })
-    .catch(err => {
-      console.error('Error loading awards:', err);
-      document.getElementById('awardGallery').innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
-    });
+          div.innerHTML = `
+  <div class="card">
+    <div class="icon">
+      <img src="${imgSrc}" alt="รางวัล" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
+    </div>
+    <div class="content">
+      <h3>${item.name ? item.name : 'ไม่ระบุชื่อรางวัล'}</h3>
+      <p>${item.detail ? item.detail : 'ไม่มีรายละเอียดเพิ่มเติม'}</p>
+    </div>
+  </div>
+`;
+          gallery.appendChild(div);
+        });
+
+        // Scroll reveal effect
+        const cards = document.querySelectorAll('.award-item');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        cards.forEach(card => observer.observe(card));
+      })
+      .catch(err => {
+        console.error('Error loading awards:', err);
+        document.getElementById('awardGallery').innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
+      });
   </script>
 </body>
+
 </html>

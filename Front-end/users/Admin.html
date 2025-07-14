@@ -74,16 +74,12 @@
       <!-- รางวัล -->
       <section id="award" class="content-section hidden">
         <h2>เพิ่มรางวัล</h2>
-        <form id="awardForm" enctype="multipart/form-data">
-          <label for="awardImage">เลือกรูปภาพรางวัล:</label>
-          <input type="file" id="awardImage" name="image" required title="เลือกรูปภาพรางวัล" />
-          <label for="awardWinner">ชื่อผู้ได้รับรางวัล:</label>
-          <input type="text" id="awardWinner" name="winner" required title="ชื่อผู้ได้รับรางวัล" placeholder="กรอกชื่อผู้ได้รับรางวัล" />
-          <label for="awardName">ชื่อรางวัล:</label>
-          <input type="text" id="awardName" name="awardName" required title="ชื่อรางวัล" placeholder="กรอกชื่อรางวัล" />
-          <label for="awardDetail">รายละเอียดรางวัล:</label>
-          <textarea id="awardDetail" name="detail" required title="รายละเอียดรางวัล" placeholder="กรอกรายละเอียดรางวัล"></textarea>
-          <button type="submit">บันทึก</button>
+        <form id="awardForm" enctype="multipart/form-data" method="POST">
+          <input type="text" name="winner" placeholder="ชื่อผู้ได้รับรางวัล" required>
+          <input type="text" name="awardName" placeholder="ชื่อรางวัล" required>
+          <input type="text" name="detail" placeholder="รายละเอียด" required>
+          <input type="file" name="image" accept="image/*">
+          <button type="submit">เพิ่มรางวัล</button>
         </form>
         <div id="awardGallery" class="gallery">
         </div>

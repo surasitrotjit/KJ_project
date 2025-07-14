@@ -9,6 +9,7 @@ const cors = require('cors');
 const users = require('./user');
 const app = express();
 const PORT = 3000;
+const { v4: uuidv4 } = require('uuid'); // ใช้สำหรับสร้าง ID ที่ไม่ซ้ำกัน
 
 
 
@@ -16,6 +17,8 @@ const PORT = 3000;
 const scheduleFile = path.join(__dirname, '../Front-end/users/schedule.json');
 const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
 const activitiesFile = path.join(__dirname, '../Back-end/data/activities.json');
+const newsFile = path.join(__dirname, '../Back-end/data/news.json');
+const awardsFile = path.join(__dirname, '../Back-end/data/awards.json');
 
 // Middleware
 app.use(cors({
@@ -266,8 +269,6 @@ const awardStorage = multer.diskStorage({
 });
 const uploadAward = multer({ storage: awardStorage });
 
-const awardsFile = path.join(__dirname, '../Back-end/data/awards.json');
-
 // GET รางวัลทั้งหมด
 app.get('/awards', (req, res) => {
     fs.readFile(awardsFile, (err, data) => {
@@ -280,10 +281,10 @@ app.get('/awards', (req, res) => {
     });
 });
 
-// POST เพิ่มรางวัล (รองรับ name)
+// POST เพิ่มรางวัล (รองรับ winner, awardName, detail)
 app.post('/awards', uploadAward.single('image'), (req, res) => {
-    const { name, detail } = req.body;
-    const imagePath = '/uploads/award/' + req.file.filename;
+    const { winner, awardName, detail } = req.body;
+    const force = req.body.force === 'true' || req.body.force === true;
     let awards = [];
     if (fs.existsSync(awardsFile)) {
         try {
@@ -292,13 +293,33 @@ app.post('/awards', uploadAward.single('image'), (req, res) => {
             awards = [];
         }
     }
-    // สร้าง id ใหม่เสมอ
-    const newItem = { id: Date.now().toString(), name, detail, imagePath };
+    const isDuplicate = awards.some(item =>
+        item.winner === winner &&
+        item.awardName === awardName &&
+        item.detail === detail
+    );
+    if (isDuplicate && !force) {
+        return res.status(409).json({ error: 'ข้อมูลซ้ำ', duplicate: true });
+    }
+    const imagePath = req.file ? '/uploads/award/' + req.file.filename : '';
+    const newItem = {
+        id: Date.now().toString(),
+        winner,
+        awardName,
+        detail,
+        imagePath
+    };
     awards.push(newItem);
     try {
         fs.writeFileSync(awardsFile, JSON.stringify(awards, null, 2));
+        if (!fs.existsSync(awardsFile)) {
+            console.warn('Warning: awards.json ไม่ถูกบันทึก ตรวจสอบ path:', awardsFile);
+        } else {
+            console.log('บันทึกลง awards.json ที่:', awardsFile);
+        }
     } catch (e) {
-        return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message });
+        console.error('เกิดข้อผิดพลาดขณะบันทึกไฟล์ awards.json:', e);
+        return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้', detail: e.message, filePath: awardsFile });
     }
     res.json({ data: newItem });
 });
@@ -480,4 +501,91 @@ app.put('/schedule', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+app.get('/news', (req, res) => {
+    fs.readFile(newsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).send('อ่านไฟล์ news.json ไม่ได้');
+        try {
+            const news = JSON.parse(data || '[]');
+            res.json(news);
+        } catch {
+            res.status(500).send('แปลงข้อมูล news.json ไม่ได้');
+        }
+    });
+});
+
+app.post('/news', (req, res) => {
+    const { title, detail } = req.body;
+    console.log('Received POST /news:', req.body); // ✅ บรรทัดนี้คุณมีแล้ว
+
+    if (!title || !detail) {
+        return res.status(400).json({ error: 'กรุณาระบุ title และ detail' });
+    }
+
+    fs.readFile(newsFile, 'utf8', (err, data) => {
+        let news = [];
+        if (!err && data) news = JSON.parse(data);
+        const newItem = {
+            id: Date.now().toString(), // ✅ มี id แล้ว
+            title,
+            detail
+        };
+        news.push(newItem);
+
+        // ✅ เพิ่ม log ตรวจสอบตรงนี้ด้วย
+        console.log('เขียนลงไฟล์ news.json:', newItem);
+
+        fs.writeFile(newsFile, JSON.stringify(news, null, 2), (err) => {
+            if (err) {
+                console.error('❌ เขียนไฟล์ไม่สำเร็จ:', err);
+                return res.status(500).json({ error: 'ไม่สามารถเขียนไฟล์ได้' });
+            }
+
+            res.json({ success: true, news: newItem });
+        });
+    });
+});
+app.put('/news/:id', express.json(), (req, res) => {
+    fs.readFile(newsFile, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading newsFile:', err);
+            return res.status(500).send('อ่านไฟล์ไม่ได้');
+        }
+        let news = [];
+        try {
+            news = JSON.parse(data);
+        } catch (parseErr) {
+            console.error('Error parsing news JSON:', parseErr);
+            return res.status(500).send('ไฟล์ news.json ไม่ถูกต้อง');
+        }
+        const idx = news.findIndex(n => n.id === req.params.id);
+        if (idx === -1) return res.status(404).send('ไม่พบข่าวสาร');
+
+        // อัปเดตเฉพาะ field ที่ต้องการ (optional)
+        news[idx] = { ...news[idx], ...req.body, id: news[idx].id };
+
+        fs.writeFile(newsFile, JSON.stringify(news, null, 2), (writeErr) => {
+            if (writeErr) {
+                console.error('Error writing newsFile:', writeErr);
+                return res.status(500).send('ไม่สามารถบันทึกไฟล์ได้');
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+app.delete('/news/:id', (req, res) => {
+  fs.readFile(newsFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).send('อ่านไฟล์ไม่ได้');
+    let news = JSON.parse(data || '[]');
+    const newNews = news.filter(item => item.id !== req.params.id);
+    if (newNews.length === news.length) {
+      return res.status(404).send('ไม่พบข่าว');
+    }
+    fs.writeFile(newsFile, JSON.stringify(newNews, null, 2), (err) => {
+      if (err) return res.status(500).send('เขียนไฟล์ไม่ได้');
+      res.json({ success: true });
+    });
+  });
 });

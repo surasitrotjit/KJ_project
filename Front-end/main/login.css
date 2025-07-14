@@ -5,10 +5,11 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    position: relative;
     background: #f5f6fa;
     overflow: hidden;
+    position: relative;
 }
+
 body::before {
     content: "";
     position: fixed;
@@ -19,18 +20,26 @@ body::before {
 }
 
 .login-box {
-    background: rgba(255,255,255,0.92);
-    max-width: 350px;
-    margin: 60px auto 0 auto;
-    padding: 36px 32px 28px 32px;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+    background: rgba(255, 255, 255, 0.95);
+    max-width: 380px;
+    margin: 60px auto;
+    padding: 40px 32px;
+    border-radius: 25px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18), 4px 4px 12px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: 0.4s ease-in-out;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 12px 12px 0px #c5c5c5, -4px -4px 12px #ffffff;
+    border: 1px solid #ccc;
 }
 
 .login-box h2 {
+    font-size: 1.5rem;
     margin-bottom: 24px;
     font-weight: 600;
     color: #2d3a4b;
@@ -50,15 +59,20 @@ body::before {
     border-radius: 10px;
     font-size: 1rem;
     background: #f8fafc;
-    outline: none;
-    transition: border 0.2s;
     color: #2d3a4b;
+    outline: none;
     box-sizing: border-box;
+    transition: 0.3s ease-in-out;
+}
+
+.input-group input:hover {
+    box-shadow: 6px 6px 0px #d5d5d5, -3px -3px 8px #ffffff;
 }
 
 .input-group input:focus {
     border: 1.5px solid #4f8cff;
-    background: #fff;
+    background: #ffffff;
+    box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .input-group i {
@@ -75,25 +89,31 @@ body::before {
     width: 100%;
     padding: 12px 0;
     background: linear-gradient(90deg, #4f8cff 0%, #38c6ff 100%);
-    color: #fff;
+    color: white;
     border: none;
     border-radius: 10px;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(79,140,255,0.10);
-    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(79, 140, 255, 0.15);
+    transition: 0.3s ease-in-out;
     margin-top: 8px;
 }
 
 .login-btn:hover {
     background: linear-gradient(90deg, #38c6ff 0%, #4f8cff 100%);
-    transform: translateY(-2px) scale(1.03);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 6px 6px 0px #d5d5d5, -3px -3px 10px #ffffff;
+}
+
+.login-btn:active {
+    transform: translateY(0px) scale(1);
+    box-shadow: none;
 }
 
 @media (max-width: 500px) {
     .login-box {
         max-width: 95vw;
-        padding: 24px 8vw 18px 8vw;
+        padding: 24px 8vw;
     }
 }
