@@ -19,6 +19,7 @@ const studentsPath = path.join(__dirname, '../Front-end/users/students.json');
 const activitiesFile = path.join(__dirname, '../Back-end/data/activities.json');
 const newsFile = path.join(__dirname, '../Back-end/data/news.json');
 const awardsFile = path.join(__dirname, '../Back-end/data/awards.json');
+const paJiabNewsFile = path.join(__dirname, '../Back-end/data/pajiabnews.json');
 
 // Middleware
 app.use(cors({
@@ -585,6 +586,94 @@ app.delete('/news/:id', (req, res) => {
     }
     fs.writeFile(newsFile, JSON.stringify(newNews, null, 2), (err) => {
       if (err) return res.status(500).send('เขียนไฟล์ไม่ได้');
+      res.json({ success: true });
+    });
+  });
+});
+
+app.get('/pajiabnews', (req, res) => {
+  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+    if (err) {
+      console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+      return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
+    }
+    try {
+      const news = JSON.parse(data || '[]');
+      res.json(news);
+    } catch (parseErr) {
+      console.error('แปลงข้อมูล pajiabnews.json ไม่ได้:', parseErr);
+      res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
+    }
+  });
+});
+
+// POST เพิ่มข่าวสาร
+app.post('/pajiabnews', (req, res) => {
+  const { title, detail } = req.body;
+  console.log('รับค่าจาก form:', title, detail);
+
+  if (!title || !detail) {
+    return res.status(400).json({ error: 'กรุณาระบุ title และ detail' });
+  }
+
+  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+    if (err) {
+      // ถ้าไฟล์ไม่มี ให้เริ่มด้วย array เปล่า
+      if (err.code === 'ENOENT') {
+        data = '[]';
+      } else {
+        console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+        return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
+      }
+    }
+
+    let news = [];
+    try {
+      news = JSON.parse(data);
+    } catch (parseErr) {
+      console.error('แปลง JSON pajiabnews.json ไม่ได้:', parseErr);
+      return res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
+    }
+
+    const newItem = {
+      id: Date.now().toString(),
+      title,
+      detail
+    };
+    news.push(newItem);
+
+    fs.writeFile(paJiabNewsFile, JSON.stringify(news, null, 2), (writeErr) => {
+      if (writeErr) {
+        console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', writeErr);
+        return res.status(500).send('ไม่สามารถเขียนไฟล์ได้');
+      }
+      res.json({ success: true, news: newItem });
+    });
+  });
+});
+
+// DELETE ลบข่าวสาร
+app.delete('/pajiabnews/:id', (req, res) => {
+  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+    if (err) {
+      console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+      return res.status(500).send('อ่านไฟล์ไม่ได้');
+    }
+    let news = [];
+    try {
+      news = JSON.parse(data);
+    } catch {
+      return res.status(500).send('ไฟล์ pajiabnews.json ไม่ถูกต้อง');
+    }
+
+    const filtered = news.filter(n => n.id !== req.params.id);
+    if (filtered.length === news.length) return res.status(404).send('ไม่พบข่าว');
+
+    fs.writeFile(paJiabNewsFile, JSON.stringify(filtered, null, 2), (err) => {
+      if (err) {
+        console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', err);
+        return res.status(500).send('เขียนไฟล์ไม่ได้');
+      }
       res.json({ success: true });
     });
   });
