@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken'); // ✅ ต้องอยู่บนสุด
-const blacklistedTokens = new Set(); // เก็บ token ที่ถูก logout แล้ว
-const SECRET_KEY = '555'; // ✅ ต้องอยู่ตรงนี้ด้วย
+const jwt = require('jsonwebtoken'); 
+const blacklistedTokens = new Set(); // เก็บ token ที่ถูก logout 
+const SECRET_KEY = '555'; 
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
@@ -9,7 +9,7 @@ const cors = require('cors');
 const users = require('./user');
 const app = express();
 const PORT = 3000;
-const { v4: uuidv4 } = require('uuid'); // ใช้สำหรับสร้าง ID ที่ไม่ซ้ำกัน
+const { v4: uuidv4 } = require('uuid'); 
 
 
 
@@ -146,7 +146,7 @@ app.put('/activities/:id', (req, res) => {
     });
 });
 
-// DELETE กิจกรรม (ลบข้อมูลและไฟล์ภาพ)
+// DELETE กิจกรรม 
 app.delete('/activities/:id', (req, res) => {
     console.log('ใช้ไฟล์ activities:', activitiesFile);
     fs.readFile(activitiesFile, 'utf8', (err, data) => {
@@ -161,7 +161,6 @@ app.delete('/activities/:id', (req, res) => {
         if (!activity) {
             return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
         }
-        // ลบไฟล์ภาพถ้ามี
         if (activity.imagePath) {
             const imgPath = path.join(__dirname, '../Back-end', activity.imagePath.replace(/^\//, ''));
             console.log('จะลบไฟล์ภาพ:', imgPath);
@@ -193,7 +192,7 @@ const uploadVisitor = multer({ storage: visitorStorage });
 
 const visitorsFile = path.join(__dirname, '../Back-end/data/visitors.json');
 
-// GET: ดึง visitor ทั้งหมด
+// GET: ดึง visitor 
 app.get('/visitors', (req, res) => {
     fs.readFile(visitorsFile, 'utf8', (err, data) => {
         if (err) return res.json([]);

@@ -4,390 +4,1155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>รางวัลความภาคภูมิใจ</title>
-  <link rel="stylesheet" href="main.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet" />
+  <title>รางวัลความภาคภูมิใจ - โรงเรียนอนุบาลกุลจินต์</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     :root {
-      --primary-color: #0055ff;
-      --secondary-color: #00aaff;
-      --bg-gradient-start: #c6e0ff;
-      --bg-gradient-end: #eaf4ff;
-      --card-bg-start: #ffffff;
-      --card-bg-end: #d8e6ff;
-      --shadow-light: rgba(74, 144, 226, 0.25);
-      --shadow-strong: rgba(74, 144, 226, 0.6);
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #f39c12;
+      --success-color: #27ae60;
+      --bg-gradient-start: #ecf0f1;
+      --bg-gradient-end: #bdc3c7;
+      --card-bg: #ffffff;
+      --text-primary: #2c3e50;
+      --text-secondary: #7f8c8d;
+      --shadow-light: rgba(52, 73, 94, 0.1);
+      --shadow-medium: rgba(52, 73, 94, 0.2);
+      --shadow-strong: rgba(52, 73, 94, 0.3);
+      --border-radius: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Reset & base */
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      font-family: 'Kanit', sans-serif;
     }
 
     body {
-      margin: 0;
+      font-family: 'Kanit', sans-serif;
       background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      display: flex;
-      flex-direction: column;
       min-height: 100vh;
-      color: #0a3d62;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      color: var(--text-primary);
+      line-height: 1.6;
     }
 
-    h1 {
-      text-align: center;
-      margin: 40px 0 10px;
-      color: var(--primary-color);
-      font-weight: 700;
-      font-size: 2rem;
-      letter-spacing: 1.2px;
+    /* Header Styles */
+    header {
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: var(--transition);
     }
 
-    /* Award Gallery Grid */
-    .award-gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      padding: 0 20px 40px;
+    header.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
       max-width: 1200px;
       margin: 0 auto;
     }
 
-    /* Card Container */
-    /* Card style from Uiverse.io by david-mohseni */
-.card {
-  width: 190px;
-  height: 120px;
-  background-color: #eee;
-  text-align: center;
-  border: 10px solid #eee;
-  border-radius: 20px;
-  box-shadow: inset 5px 5px 10px #bbb, inset -5px -5px 10px #fff;
-  transition: 0.5s;
-  margin: 0 auto;
-}
-
-.card:hover {
-  height: 254px;
-}
-
-.icon {
-  width: 60px;
-  height: 60px;
-  font-size: 30px;
-  background-color: #eee;
-  margin: 20px auto;
-  padding: 5px;
-  border-radius: 50%;
-  box-shadow: 8px 8px 10px #ddd, -8px -8px 10px #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.content {
-  color: #555;
-  background-color: #eee;
-  padding: 10px;
-  margin: 5px 20px;
-  border-radius: 8px;
-  box-shadow: 8px 8px 10px #ddd, -8px -8px 10px #fff;
-  transform: translateY(-80px) scale(0);
-  transition: all 0.5s;
-}
-
-.card:hover .content {
-  transform: translateY(0) scale(1)
-}
-
-.content h3 {
-  text-shadow: 2px 2px 0px #fff;
-  font-size: 1.1rem;
-  margin-bottom: 6px;
-}
-
-.content p {
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-    /* Reveal */
-    .award-item.visible {
-      opacity: 1;
-      transform: translateY(0);
-      transition-delay: 0.15s;
-    }
-
-    /* Hover effect */
-    .award-item:hover {
-      transform: translateY(-12px) scale(1.05);
-      box-shadow: 0 20px 40px var(--shadow-strong);
-      z-index: 2;
-    }
-
-    /* Image */
-    .award-img {
-      width: 140px;
-      height: 140px;
-      border-radius: 15px;
+    .logo img {
+      width: 60px;
+      height: 60px;
       object-fit: contain;
-      margin: 20px auto 18px;
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-      background: white;
-      padding: 8px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      display: block;
     }
 
-    .award-item:hover .award-img {
-      transform: scale(1.07);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    .school-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    /* Gradient Shimmer Text */
-    .award-name {
-      position: relative;
-      font-weight: 800;
-      font-size: 1.3rem;
-      background: linear-gradient(90deg, var(--secondary-color) 25%, var(--primary-color) 50%, var(--secondary-color) 75%);
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-      animation: shimmer 3s linear infinite;
-      margin: 0 15px;
+    .school-name-en {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
       text-align: center;
-      letter-spacing: 0.5px;
-      user-select: text;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      color: white;
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes shimmer {
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><polygon points="0,0 1000,80 1000,100 0,100"/></svg>');
+      background-size: cover;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+      color: var(--accent-color);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+      border-radius: 2px;
+    }
+
+    /* Filter Buttons */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid var(--secondary-color);
+      background: transparent;
+      color: var(--secondary-color);
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--secondary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    /* Awards Grid */
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .award-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 25px var(--shadow-light);
+      overflow: hidden;
+      transition: var(--transition);
+      position: relative;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .award-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px var(--shadow-medium);
+    }
+
+    .award-image-container {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+    .award-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .award-card:hover .award-image {
+      transform: scale(1.1);
+    }
+
+    .award-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);
+    }
+
+    .award-content {
+      padding: 1.5rem;
+    }
+
+    .award-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+
+
+      line-clamp: 2;
+    }
+
+
+    .award-winner {
+      font-size: 1rem;
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .award-winner::before {
+      content: '👤';
+      font-size: 1.2rem;
+    }
+
+    .award-detail {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-clamp: 3;
+    }
+
+    .award-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+      margin-top: 1rem;
+    }
+
+    .award-id {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background: #f8f9fa;
+      padding: 0.2rem 0.6rem;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .view-more-btn {
+      background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.8rem;
+    }
+
+    .view-more-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--secondary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
       0% {
-        background-position: 200% 0;
+        transform: rotate(0deg);
       }
 
       100% {
-        background-position: -200% 0;
+        transform: rotate(360deg);
       }
     }
 
-    /* Award detail text */
-    .award-detail {
-      font-weight: 500;
-      font-size: 1rem;
-      line-height: 1.4;
-      padding: 0 15px;
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Empty State */
+    .empty-state {
       text-align: center;
-      color: #0a3d62dd;
-      user-select: text;
-      min-height: 65px;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
     }
 
-    /* Announcement Header */
-    .announcement-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
-      margin: 20px 0 10px;
-      gap: 10px;
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: var(--secondary-color);
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
       color: var(--primary-color);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .close:hover {
+      color: #000;
+      background: #f0f0f0;
+    }
+
+    .modal-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: var(--border-radius);
+      margin-bottom: 1rem;
+      background: #f8f9fa;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--primary-color), #1a252f);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+
+    .school-footer-name {
+      font-size: 1.3rem;
       font-weight: 700;
-      user-select: none;
+      margin-bottom: 0.5rem;
     }
 
-    .bell-icon {
-      font-size: 28px;
+    .school-address,
+    .school-contact {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 0.3rem;
     }
 
-    /* Sidebar and header styling omitted for brevity — assume same as your main.css */
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .award-item {
-        height: 280px;
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
       }
 
-      .award-img {
-        width: 110px;
-        height: 110px;
-        margin-bottom: 12px;
+      .logo-container {
+        justify-content: space-between;
       }
 
-      .award-name {
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .awards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .award-card {
+        margin: 0 1rem;
+      }
+
+      .filter-container {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 0 1rem;
+      }
+
+      .filter-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .main-content {
+        padding: 2rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .award-image-container {
+        height: 150px;
+      }
+
+      .award-content {
+        padding: 1rem;
+      }
+
+      .award-title {
         font-size: 1.1rem;
       }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--secondary-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
     }
   </style>
 </head>
 
 <body>
-  <!-- Overlay -->
-  <div class="overlay" id="overlay"></div>
-
-  <!-- Sidebar Button -->
-  <div class="sidebar-btn" id="sidebarBtn">
-    <i class="fas fa-bars"></i>
-  </div>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <div class="logo-container-sidebar">
-      <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์ Logo" class="sidebar-logo" />
-      <div class="close-btn" id="closeSidebarBtn">&times;</div>
-    </div>
-    <nav class="sidebar-menu">
-      <a href="main.html" class="menu-item"><i class="fas fa-home"></i><span>หน้าหลัก</span></a>
-      <a href="history.html" class="menu-item"><i class="fas fa-id-card"></i><span>ประวัติโรงเรียน</span></a>
-      <a href="award.html" class="menu-item active"><i class="fas fa-award"></i><span>รางวัลความภาคภูมิใจ</span></a>
-      <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
-      <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
-      <a href="activity.html" class="menu-item"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
-      <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item">
-        <i class="fas fa-comments"></i><span>ถาม-ตอบ</span>
-      </a>
-      <a href="news.html" class="menu-item"><i class="fas fa-book-open"></i><span>ข่าวสารทั่วไป</span></a>
-      <a href="contact.html" class="menu-item"><i class="fas fa-phone"></i><span>ติดต่อ</span></a>
-    </nav>
-  </div>
-
-  <!-- Main Container -->
-  <div class="main-container">
-    <header>
-      <div class="logo-container">
-        <div class="logo">
-          <img src="../Image/logo.png" alt="โลโก้" />
-        </div>
-        <div>
-          <div class="school-name">โรงเรียนอนุบาลกุลจินต์</div>
-          <div class="school-name-en">Kunlajin Kindergarten</div>
-        </div>
+  <!-- Header -->
+  <header id="header">
+    <div class="logo-container">
+      <div class="logo">
+        <img src="../Image/logo.png" alt="โลโก้โรงเรียนอนุบาลกุลจินต์" />
+      </div>
+      <div>
+        <div class="school-name">โรงเรียนอนุบาลกุลจินต์</div>
+        <div class="school-name-en">Kunlajin Kindergarten</div>
       </div>
       <div class="hamburger" id="hamburgerBtn">
         <i class="fas fa-bars"></i>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="hero">
-      <div class="hero-text">ยินดีต้อนรับสู่เว็บไซต์<br />โรงเรียนอนุบาลกุลจินต์</div>
-      <div class="motto-banner">"พัฒนาการดี มีคุณธรรม พร้อมนำชุมชน"</div>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">🏆 รางวัลความภาคภูมิใจ</h1>
+      <p class="hero-subtitle">ความสำเร็จและความภาคภูมิใจของโรงเรียนอนุบาลกุลจินต์</p>
+
+      <div class="stats-container" id="statsContainer">
+        <div class="stat-item">
+          <span class="stat-number" id="totalAwards">0</span>
+          <span class="stat-label">รางวัลทั้งหมด</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="thisYearAwards">0</span>
+          <span class="stat-label">รางวัลปีนี้</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="uniqueWinners">0</span>
+          <span class="stat-label">ผู้ได้รับรางวัล</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <h2 class="section-title">รางวัลและความสำเร็จ</h2>
+
+    <!-- Filter Buttons -->
+    <div class="filter-container">
+      <button class="filter-btn active" data-filter="all">
+        <i class="fas fa-th"></i> ทั้งหมด
+      </button>
+      <button class="filter-btn" data-filter="teacher">
+        <i class="fas fa-chalkboard-teacher"></i> ครู
+      </button>
+      <button class="filter-btn" data-filter="student">
+        <i class="fas fa-user-graduate"></i> นักเรียน
+      </button>
+      <button class="filter-btn" data-filter="school">
+        <i class="fas fa-school"></i> โรงเรียน
+      </button>
     </div>
 
-    <div class="main-content">
-      <div class="announcement-header">
-        <div class="bell-icon">🔔</div>
-        <div>รางวัลและความภาคภูมิใจ</div>
+    <!-- Awards Grid -->
+    <div class="awards-grid" id="awardsGrid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>กำลังโหลดข้อมูลรางวัล...</p>
       </div>
+    </div>
+  </main>
 
-      <div class="logo-center">
-        <img src="../Image/logo.png" alt="โลโก้โรงเรียน" />
-      </div>
-
-      <div class="award-gallery" id="awardGallery"></div>
-
-      <footer>
-        <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
-        <div class="school-address">
-          1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110
-        </div>
-        <div class="school-contact">Tel. : 074-257884, Fax : 074-258107, E-mail : Kunlajin@gmail.com</div>
-      </footer>
+  <!-- Modal for Award Details -->
+  <div id="awardModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="modalContent"></div>
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer>
+    <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
+    <div class="school-address">
+      1 ถนนรณภูมิ ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110
+    </div>
+    <div class="school-contact">
+      Tel. : 074-257884, Fax : 074-258107, E-mail : Kunlajin@gmail.com
+    </div>
+  </footer>
+
   <script>
-    // Sidebar toggle
-    const sidebarBtn = document.getElementById('sidebarBtn');
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-
-    function openSidebar() {
-      sidebar.classList.add('active');
-      overlay.style.display = 'block';
-    }
-    function closeSidebar() {
-      sidebar.classList.remove('active');
-      overlay.style.display = 'none';
-    }
-
-    sidebarBtn.addEventListener('click', openSidebar);
-    hamburgerBtn.addEventListener('click', openSidebar);
-    closeSidebarBtn.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
-
-    window.addEventListener('scroll', () => {
-      const header = document.querySelector('header');
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
+    class AwardManager {
+      constructor() {
+        this.awards = [];
+        this.filteredAwards = [];
+        this.currentFilter = 'all';
+        this.modal = document.getElementById('awardModal');
+        this.init();
       }
-    });
 
-    // Fetch awards data
-    fetch('http://localhost:3000/awards')
-      .then(res => res.json())
-      .then(data => {
-        const gallery = document.getElementById('awardGallery');
-        gallery.innerHTML = '';
+      init() {
+        this.setupEventListeners();
+        this.loadAwards();
+      }
 
-        if (!Array.isArray(data) || data.length === 0) {
-          gallery.innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
+      setupEventListeners() {
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            this.currentFilter = e.target.dataset.filter;
+            this.filterAwards();
+          });
+        });
+
+        // Modal events
+        const closeBtn = document.querySelector('.close');
+        closeBtn.addEventListener('click', () => this.closeModal());
+
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.closeModal();
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') this.closeModal();
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+          const header = document.getElementById('header');
+          if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        });
+      }
+
+      async loadAwards() {
+        try {
+          const response = await fetch('http://localhost:3000/awards');
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (!Array.isArray(data)) {
+            throw new Error('Invalid data format');
+          }
+
+          this.awards = data.map(award => ({
+            ...award,
+            id: award.id || Math.random().toString(36).substr(2, 9),
+            winner: award.winner || 'ไม่ระบุผู้ได้รับรางวัล',
+            awardName: award.awardName || award.name || 'ไม่ระบุชื่อรางวัล',
+            detail: award.detail || 'ไม่มีรายละเอียดเพิ่มเติม',
+            imagePath: award.imagePath || null,
+            category: this.categorizeAward(award),
+            year: this.extractYear(award.awardName || award.detail || '')
+          }));
+
+          this.updateStats();
+          this.filterAwards();
+
+        } catch (error) {
+          console.error('Error loading awards:', error);
+          this.showError('ไม่สามารถโหลดข้อมูลรางวัลได้ กรุณาลองใหม่อีกครั้ง');
+        }
+      }
+
+      categorizeAward(award) {
+        const text = `${award.winner || ''} ${award.awardName || ''} ${award.detail || ''}`.toLowerCase();
+
+        if (text.includes('ครู') || text.includes('อาจารย์') || text.includes('ผู้สอน') || text.includes('นักการศึกษา')) {
+          return 'teacher';
+        }
+        if (text.includes('นักเรียน') || text.includes('เด็ก') || text.includes('ผู้เรียน')) {
+          return 'student';
+        }
+        if (text.includes('โรงเรียน') || text.includes('สถานศึกษา') || text.includes('องค์กร')) {
+          return 'school';
+        }
+
+        return 'other';
+      }
+
+      extractYear(text) {
+        const yearMatch = text.match(/\b(25\d{2}|\d{4})\b/);
+        if (yearMatch) {
+          let year = parseInt(yearMatch[1]);
+          if (year > 2500) year -= 543; // Convert Buddhist to Gregorian
+          return year;
+        }
+        return new Date().getFullYear();
+      }
+
+      updateStats() {
+        const currentYear = new Date().getFullYear();
+        const thisYearAwards = this.awards.filter(award => award.year === currentYear).length;
+        const uniqueWinners = new Set(this.awards.map(award => award.winner)).size;
+
+        this.animateCounter('totalAwards', this.awards.length);
+        this.animateCounter('thisYearAwards', thisYearAwards);
+        this.animateCounter('uniqueWinners', uniqueWinners);
+      }
+
+      animateCounter(elementId, target) {
+        const element = document.getElementById(elementId);
+        const duration = 2000;
+        const start = 0;
+        const startTime = performance.now();
+
+        const animate = (currentTime) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const current = Math.floor(progress * target);
+
+          element.textContent = current;
+
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          }
+        };
+
+        requestAnimationFrame(animate);
+      }
+
+      filterAwards() {
+        if (this.currentFilter === 'all') {
+          this.filteredAwards = [...this.awards];
+        } else {
+          this.filteredAwards = this.awards.filter(award => award.category === this.currentFilter);
+        }
+
+        this.renderAwards();
+      }
+
+      renderAwards() {
+        const grid = document.getElementById('awardsGrid');
+
+        if (this.filteredAwards.length === 0) {
+          grid.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-award"></i>
+              <h3>ไม่พบรางวัลในหมวดหมู่นี้</h3>
+              <p>ลองเลือกหมวดหมู่อื่นหรือเลือก "ทั้งหมด" เพื่อดูรางวัลทั้งหมด</p>
+            </div>
+          `;
           return;
         }
 
-        data.forEach((item, idx) => {
-          const div = document.createElement('div');
-          div.className = 'award-item';
-          div.style.transitionDelay = `${idx * 0.1}s`;
+        const cardsHTML = this.filteredAwards.map((award, index) => {
+          const imageUrl = award.imagePath
+            ? (award.imagePath.startsWith('http') ? award.imagePath : `http://localhost:3000${award.imagePath}`)
+            : 'https://via.placeholder.com/350x200/f8f9fa/6c757d?text=No+Image';
 
-          // ตรวจสอบ imagePath ว่ามีหรือไม่
-          let imgSrc = '';
-          if (item.imagePath) {
-            imgSrc = item.imagePath.startsWith('http')
-              ? item.imagePath
-              : `http://localhost:3000${item.imagePath}`;
-          } else {
-            imgSrc = 'https://cdn-icons-png.flaticon.com/512/190/190411.png'; // รูป default
-          }
+          const categoryIcon = {
+            teacher: 'fa-chalkboard-teacher',
+            student: 'fa-user-graduate',
+            school: 'fa-school',
+            other: 'fa-award'
+          };
 
-          div.innerHTML = `
-  <div class="card">
-    <div class="icon">
-      <img src="${imgSrc}" alt="รางวัล" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;" />
-    </div>
-    <div class="content">
-      <h3>${item.name ? item.name : 'ไม่ระบุชื่อรางวัล'}</h3>
-      <p>${item.detail ? item.detail : 'ไม่มีรายละเอียดเพิ่มเติม'}</p>
-    </div>
-  </div>
-`;
-          gallery.appendChild(div);
-        });
+          const categoryName = {
+            teacher: 'ครู',
+            student: 'นักเรียน',
+            school: 'โรงเรียน',
+            other: 'อื่นๆ'
+          };
 
-        // Scroll reveal effect
-        const cards = document.querySelectorAll('.award-item');
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
-            }
+          return `
+            <div class="award-card" style="animation-delay: ${index * 0.1}s" data-award-id="${award.id}">
+              <div class="award-image-container">
+                <img src="${imageUrl}" alt="${award.awardName}" class="award-image" 
+                     onerror="this.src='https://via.placeholder.com/350x200/f8f9fa/6c757d?text=No+Image'" />
+                <div class="award-badge">
+                  <i class="fas ${categoryIcon[award.category]}"></i>
+                  ${categoryName[award.category]}
+                </div>
+              </div>
+              <div class="award-content">
+                <h3 class="award-title">${award.awardName}</h3>
+                <div class="award-winner">${award.winner}</div>
+                <p class="award-detail">${award.detail}</p>
+                <div class="award-footer">
+                  <span class="award-id">ID: ${award.id}</span>
+                  <button class="view-more-btn" onclick="awardManager.showAwardDetail('${award.id}')">
+                    <i class="fas fa-eye"></i> ดูรายละเอียด
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        grid.innerHTML = cardsHTML;
+
+        // Trigger animations
+        setTimeout(() => {
+          document.querySelectorAll('.award-card').forEach((card, index) => {
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, index * 100);
           });
-        }, { threshold: 0.1 });
+        }, 50);
+      }
 
-        cards.forEach(card => observer.observe(card));
-      })
-      .catch(err => {
-        console.error('Error loading awards:', err);
-        document.getElementById('awardGallery').innerHTML = '<p style="text-align:center; color:#555;">ไม่พบข้อมูลรางวัล</p>';
+      showAwardDetail(awardId) {
+        const award = this.awards.find(a => a.id === awardId);
+        if (!award) return;
+
+        const imageUrl = award.imagePath
+          ? (award.imagePath.startsWith('http') ? award.imagePath : `http://localhost:3000${award.imagePath}`)
+          : 'https://via.placeholder.com/600x400/f8f9fa/6c757d?text=No+Image';
+
+        const categoryName = {
+          teacher: 'ครู',
+          student: 'นักเรียน',
+          school: 'โรงเรียน',
+          other: 'อื่นๆ'
+        };
+
+        const modalContent = document.getElementById('modalContent');
+        modalContent.innerHTML = `
+          <img src="${imageUrl}" alt="${award.awardName}" class="modal-image" 
+               onerror="this.src='https://via.placeholder.com/600x400/f8f9fa/6c757d?text=No+Image'" />
+          <div style="padding: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+              <h2 style="color: var(--primary-color); margin: 0; line-height: 1.3; flex: 1;">${award.awardName}</h2>
+              <span style="background: var(--accent-color); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; margin-left: 1rem;">
+                ${categoryName[award.category]}
+              </span>
+            </div>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+              <h4 style="color: var(--secondary-color); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-user"></i> ผู้ได้รับรางวัล
+              </h4>
+              <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--primary-color);">${award.winner}</p>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <h4 style="color: var(--primary-color); margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-info-circle"></i> รายละเอียด
+              </h4>
+              <p style="margin: 0; line-height: 1.6; color: var(--text-secondary);">${award.detail}</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+              <div style="text-align: center;">
+                <div style="color: var(--secondary-color); font-weight: 600; font-size: 0.8rem; margin-bottom: 0.2rem;">รหัสรางวัล</div>
+                <div style="font-size: 1rem; color: var(--primary-color); font-weight: 600;">${award.id}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="color: var(--secondary-color); font-weight: 600; font-size: 0.8rem; margin-bottom: 0.2rem;">ปี</div>
+                <div style="font-size: 1rem; color: var(--primary-color); font-weight: 600;">${award.year}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="color: var(--secondary-color); font-weight: 600; font-size: 0.8rem; margin-bottom: 0.2rem;">หมวดหมู่</div>
+                <div style="font-size: 1rem; color: var(--primary-color); font-weight: 600;">${categoryName[award.category]}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        this.modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeModal() {
+        this.modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+
+      showError(message) {
+        const grid = document.getElementById('awardsGrid');
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+            <h3 style="color: #e74c3c;">เกิดข้อผิดพลาด</h3>
+            <p>${message}</p>
+            <button onclick="awardManager.loadAwards()" style="
+              background: var(--secondary-color);
+              color: white;
+              border: none;
+              padding: 0.8rem 1.5rem;
+              border-radius: 25px;
+              font-weight: 600;
+              cursor: pointer;
+              margin-top: 1rem;
+              transition: var(--transition);
+            ">
+              <i class="fas fa-refresh"></i> ลองใหม่
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize when DOM is loaded
+    let awardManager;
+    document.addEventListener('DOMContentLoaded', () => {
+      awardManager = new AwardManager();
+    });
+
+    // Search functionality (can be added later)
+    function setupSearch() {
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.placeholder = 'ค้นหารางวัล...';
+      searchInput.style.cssText = `
+        width: 100%;
+        max-width: 400px;
+        padding: 0.8rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        font-size: 1rem;
+        margin: 0 auto 2rem;
+        display: block;
+        transition: var(--transition);
+        font-family: 'Kanit', sans-serif;
+      `;
+
+      searchInput.addEventListener('focus', function () {
+        this.style.borderColor = 'var(--secondary-color)';
+        this.style.boxShadow = '0 0 0 3px rgba(52, 152, 219, 0.1)';
       });
+
+      searchInput.addEventListener('blur', function () {
+        this.style.borderColor = '#ddd';
+        this.style.boxShadow = 'none';
+      });
+
+      searchInput.addEventListener('input', function () {
+        if (awardManager) {
+          const query = this.value.toLowerCase().trim();
+          if (query === '') {
+            awardManager.filterAwards();
+          } else {
+            const filtered = awardManager.awards.filter(award =>
+              award.awardName.toLowerCase().includes(query) ||
+              award.winner.toLowerCase().includes(query) ||
+              award.detail.toLowerCase().includes(query)
+            );
+            awardManager.filteredAwards = filtered;
+            awardManager.renderAwards();
+          }
+        }
+      });
+
+      const filterContainer = document.querySelector('.filter-container');
+      filterContainer.parentNode.insertBefore(searchInput, filterContainer);
+    }
+
+    // Add search after page loads
+    window.addEventListener('load', () => {
+      setTimeout(setupSearch, 1000);
+    });
+
+    // Smooth scrolling for better UX
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Add loading animation for images
+    document.addEventListener('DOMContentLoaded', function () {
+      const style = document.createElement('style');
+      style.textContent = `
+        .award-image {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 200% 100%;
+          animation: loading 1.5s infinite;
+        }
+        
+        .award-image[src] {
+          animation: none;
+        }
+        
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    });
+
+    // Add keyboard navigation for better accessibility
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab') {
+        document.body.classList.add('keyboard-navigation');
+      }
+    });
+
+    document.addEventListener('mousedown', function () {
+      document.body.classList.remove('keyboard-navigation');
+    });
+
+    // Add focus styles for keyboard users
+    const focusStyle = document.createElement('style');
+    focusStyle.textContent = `
+      .keyboard-navigation .filter-btn:focus,
+      .keyboard-navigation .view-more-btn:focus {
+        outline: 2px solid var(--secondary-color);
+        outline-offset: 2px;
+      }
+    `;
+    document.head.appendChild(focusStyle);
+
+    // Performance optimization: Lazy loading for images
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+              observer.unobserve(img);
+            }
+          }
+        });
+      }, {
+        rootMargin: '50px'
+      });
+
+      // This will be used when images are created dynamically
+      window.observeImage = function (img) {
+        imageObserver.observe(img);
+      };
+    }
+
+    // Add print styles
+    const printStyles = document.createElement('style');
+    printStyles.textContent = `
+      @media print {
+        .filter-container,
+        .view-more-btn,
+        .modal {
+          display: none !important;
+        }
+        
+        .award-card {
+          break-inside: avoid;
+          margin-bottom: 1rem;
+          box-shadow: none !important;
+          border: 1px solid #ddd;
+        }
+        
+        .awards-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+        }
+        
+        .hero {
+          background: white !important;
+          color: black !important;
+        }
+        
+        body {
+          background: white !important;
+        }
+      }
+    `;
+    document.head.appendChild(printStyles);
   </script>
 </body>
 
