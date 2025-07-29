@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 const blacklistedTokens = new Set(); // เก็บ token ที่ถูก logout 
-const SECRET_KEY = '555'; 
+const SECRET_KEY = '555';
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
@@ -9,7 +9,7 @@ const cors = require('cors');
 const users = require('./user');
 const app = express();
 const PORT = 3000;
-const { v4: uuidv4 } = require('uuid'); 
+const { v4: uuidv4 } = require('uuid');
 
 
 
@@ -139,9 +139,11 @@ app.put('/activities/:id', (req, res) => {
         const idx = arr.findIndex(a => a.id == req.params.id);
         if (idx === -1) return res.status(404).json({ error: 'ไม่พบกิจกรรม' });
         arr[idx] = { ...arr[idx], ...req.body, id: arr[idx].id };
-        fs.writeFile(activitiesFile, JSON.stringify(arr, null, 2), err2 => {
-            if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
-            res.json({ success: true });
+        fs.writeFile(activitiesFile, JSON.stringify(activities, null, 2), (err2) => {
+            if (err2) {
+                return res.status(500).json({ error: 'บันทึกไฟล์ไม่สำเร็จ', detail: err2.message });
+            }
+            res.json({ success: true, activity: newActivity });
         });
     });
 });
@@ -173,9 +175,11 @@ app.delete('/activities/:id', (req, res) => {
             });
         }
         arr = arr.filter(a => a.id !== req.params.id);
-        fs.writeFile(activitiesFile, JSON.stringify(arr, null, 2), err2 => {
-            if (err2) return res.status(500).json({ error: 'บันทึกไฟล์ไม่ได้' });
-            res.json({ success: true });
+        fs.writeFile(activitiesFile, JSON.stringify(activities, null, 2), (err2) => {
+            if (err2) {
+                return res.status(500).json({ error: 'บันทึกไฟล์ไม่สำเร็จ', detail: err2.message });
+            }
+            res.json({ success: true, activity: newActivity });
         });
     });
 });
@@ -576,104 +580,104 @@ app.put('/news/:id', express.json(), (req, res) => {
 });
 
 app.delete('/news/:id', (req, res) => {
-  fs.readFile(newsFile, 'utf8', (err, data) => {
-    if (err) return res.status(500).send('อ่านไฟล์ไม่ได้');
-    let news = JSON.parse(data || '[]');
-    const newNews = news.filter(item => item.id !== req.params.id);
-    if (newNews.length === news.length) {
-      return res.status(404).send('ไม่พบข่าว');
-    }
-    fs.writeFile(newsFile, JSON.stringify(newNews, null, 2), (err) => {
-      if (err) return res.status(500).send('เขียนไฟล์ไม่ได้');
-      res.json({ success: true });
+    fs.readFile(newsFile, 'utf8', (err, data) => {
+        if (err) return res.status(500).send('อ่านไฟล์ไม่ได้');
+        let news = JSON.parse(data || '[]');
+        const newNews = news.filter(item => item.id !== req.params.id);
+        if (newNews.length === news.length) {
+            return res.status(404).send('ไม่พบข่าว');
+        }
+        fs.writeFile(newsFile, JSON.stringify(newNews, null, 2), (err) => {
+            if (err) return res.status(500).send('เขียนไฟล์ไม่ได้');
+            res.json({ success: true });
+        });
     });
-  });
 });
 
 app.get('/pajiabnews', (req, res) => {
-  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
-    if (err) {
-      console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
-      return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
-    }
-    try {
-      const news = JSON.parse(data || '[]');
-      res.json(news);
-    } catch (parseErr) {
-      console.error('แปลงข้อมูล pajiabnews.json ไม่ได้:', parseErr);
-      res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
-    }
-  });
+    fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+        if (err) {
+            console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+            return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
+        }
+        try {
+            const news = JSON.parse(data || '[]');
+            res.json(news);
+        } catch (parseErr) {
+            console.error('แปลงข้อมูล pajiabnews.json ไม่ได้:', parseErr);
+            res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
+        }
+    });
 });
 
 // POST เพิ่มข่าวสาร
 app.post('/pajiabnews', (req, res) => {
-  const { title, detail } = req.body;
-  console.log('รับค่าจาก form:', title, detail);
+    const { title, detail } = req.body;
+    console.log('รับค่าจาก form:', title, detail);
 
-  if (!title || !detail) {
-    return res.status(400).json({ error: 'กรุณาระบุ title และ detail' });
-  }
-
-  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
-    if (err) {
-      // ถ้าไฟล์ไม่มี ให้เริ่มด้วย array เปล่า
-      if (err.code === 'ENOENT') {
-        data = '[]';
-      } else {
-        console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
-        return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
-      }
+    if (!title || !detail) {
+        return res.status(400).json({ error: 'กรุณาระบุ title และ detail' });
     }
 
-    let news = [];
-    try {
-      news = JSON.parse(data);
-    } catch (parseErr) {
-      console.error('แปลง JSON pajiabnews.json ไม่ได้:', parseErr);
-      return res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
-    }
+    fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+        if (err) {
+            // ถ้าไฟล์ไม่มี ให้เริ่มด้วย array เปล่า
+            if (err.code === 'ENOENT') {
+                data = '[]';
+            } else {
+                console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+                return res.status(500).send('อ่านไฟล์ pajiabnews.json ไม่ได้');
+            }
+        }
 
-    const newItem = {
-      id: Date.now().toString(),
-      title,
-      detail
-    };
-    news.push(newItem);
+        let news = [];
+        try {
+            news = JSON.parse(data);
+        } catch (parseErr) {
+            console.error('แปลง JSON pajiabnews.json ไม่ได้:', parseErr);
+            return res.status(500).send('แปลงข้อมูล pajiabnews.json ไม่ได้');
+        }
 
-    fs.writeFile(paJiabNewsFile, JSON.stringify(news, null, 2), (writeErr) => {
-      if (writeErr) {
-        console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', writeErr);
-        return res.status(500).send('ไม่สามารถเขียนไฟล์ได้');
-      }
-      res.json({ success: true, news: newItem });
+        const newItem = {
+            id: Date.now().toString(),
+            title,
+            detail
+        };
+        news.push(newItem);
+
+        fs.writeFile(paJiabNewsFile, JSON.stringify(news, null, 2), (writeErr) => {
+            if (writeErr) {
+                console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', writeErr);
+                return res.status(500).send('ไม่สามารถเขียนไฟล์ได้');
+            }
+            res.json({ success: true, news: newItem });
+        });
     });
-  });
 });
 
 // DELETE ลบข่าวสาร
 app.delete('/pajiabnews/:id', (req, res) => {
-  fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
-    if (err) {
-      console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
-      return res.status(500).send('อ่านไฟล์ไม่ได้');
-    }
-    let news = [];
-    try {
-      news = JSON.parse(data);
-    } catch {
-      return res.status(500).send('ไฟล์ pajiabnews.json ไม่ถูกต้อง');
-    }
+    fs.readFile(paJiabNewsFile, 'utf8', (err, data) => {
+        if (err) {
+            console.error('อ่านไฟล์ pajiabnews.json ไม่ได้:', err);
+            return res.status(500).send('อ่านไฟล์ไม่ได้');
+        }
+        let news = [];
+        try {
+            news = JSON.parse(data);
+        } catch {
+            return res.status(500).send('ไฟล์ pajiabnews.json ไม่ถูกต้อง');
+        }
 
-    const filtered = news.filter(n => n.id !== req.params.id);
-    if (filtered.length === news.length) return res.status(404).send('ไม่พบข่าว');
+        const filtered = news.filter(n => n.id !== req.params.id);
+        if (filtered.length === news.length) return res.status(404).send('ไม่พบข่าว');
 
-    fs.writeFile(paJiabNewsFile, JSON.stringify(filtered, null, 2), (err) => {
-      if (err) {
-        console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', err);
-        return res.status(500).send('เขียนไฟล์ไม่ได้');
-      }
-      res.json({ success: true });
+        fs.writeFile(paJiabNewsFile, JSON.stringify(filtered, null, 2), (err) => {
+            if (err) {
+                console.error('เขียนไฟล์ pajiabnews.json ไม่สำเร็จ:', err);
+                return res.status(500).send('เขียนไฟล์ไม่ได้');
+            }
+            res.json({ success: true });
+        });
     });
-  });
 });

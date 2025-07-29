@@ -19,7 +19,9 @@ function addItemToGallery(galleryId, data) {
     const card = document.createElement('div');
     card.className = 'activity-card';
     card.innerHTML = `
-    <img src="http://localhost:3000${data.imagePath}" alt="รูปภาพ" class="activity-image">
+    ${data.images && data.images.length > 0 ? data.images.map(img =>
+        `<img src="http://localhost:3000/uploads/activity/${img}" alt="รูปภาพ" class="activity-image" style="width:120px;height:120px;object-fit:cover;margin:4px;">`
+    ).join('') : ''}
     <div class="activity-info">
         ${data.name ? `<div><b>${data.name}</b></div>` : ""}
         ${data.detail}
@@ -92,7 +94,7 @@ async function renderActivityGallery() {
     gallery.innerHTML = '';
     activities.forEach(activity => {
         const imagesHtml = (activity.images || []).map(img =>
-            `<img src="http://localhost:3000/uploads/activities/${img}" 
+            `<img src="http://localhost:3000/uploads/activity/${img}" 
         alt="activity" 
         style="width:120px;max-width:120px;max-height:120px;object-fit:cover;border-radius:8px;margin:4px;cursor:pointer;"
         onclick="showActivityDetail('${activity.id}', '${img}')">`
@@ -136,7 +138,10 @@ async function showActivityDetail(id) {
     const activities = await loadActivities();
     const act = activities.find(a => a.id == id); // ใช้ == เผื่อ id เป็น string/number
     if (!act) return;
-    document.getElementById('activityModalImg').src = `http://localhost:3000${act.imagePath}`;
+    document.getElementById('activityModalImg').src =
+        act.images && act.images.length > 0
+            ? `http://localhost:3000/uploads/activity/${act.images[0]}`
+            : '';
     document.getElementById('activityModalDetail').innerHTML = act.detail.replace(/\r?\n/g, '<br>');
     // สร้างปุ่มแก้ไข/ลบใน modal
     document.getElementById('activityModalActions').innerHTML = `
@@ -154,6 +159,27 @@ window.onclick = function (event) {
     if (event.target === modal) {
         modal.style.display = 'none';
     }
+};
+
+document.getElementById('activityForm').onsubmit = function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('http://localhost:3000/activities', {
+        method: 'POST',
+        body: formData
+    })
+        .then(res => res.json())
+        .then(data => {
+            // ตัวอย่าง: โหลดกิจกรรมใหม่หลังเพิ่มเสร็จ
+            if (data.success) {
+                alert('เพิ่มกิจกรรมสำเร็จ');
+                renderActivityGallery(); // ถ้ามีฟังก์ชันนี้
+                this.reset();
+            } else {
+                alert('เกิดข้อผิดพลาด');
+            }
+        })
+        .catch(() => alert('เกิดข้อผิดพลาด'));
 };
 // Auto assign submit handlers
 window.onload = () => {
@@ -971,14 +997,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadNews() {
-  const res = await fetch('http://localhost:3000/news');
-  const data = await res.json();
-  const tableBody = document.querySelector('#newsTable tbody');
-  tableBody.innerHTML = '';
+    const res = await fetch('http://localhost:3000/news');
+    const data = await res.json();
+    const tableBody = document.querySelector('#newsTable tbody');
+    tableBody.innerHTML = '';
 
-  data.forEach(item => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
       <td>${item.title}</td>
       <td>${item.detail}</td>
       <td>
@@ -986,8 +1012,8 @@ async function loadNews() {
         <button onclick="deleteNews('${item.id}')">ลบ</button>
       </td>
     `;
-    tableBody.appendChild(row);
-  });
+        tableBody.appendChild(row);
+    });
 }
 
 async function addNews() {
@@ -1018,271 +1044,271 @@ async function editNews(id) {
 }
 
 async function deleteNews(id) {
-  if (!confirm('คุณต้องการลบข่าวนี้ใช่หรือไม่?')) return;
+    if (!confirm('คุณต้องการลบข่าวนี้ใช่หรือไม่?')) return;
 
-  const res = await fetch(`http://localhost:3000/news/${id}`, {
-    method: 'DELETE'
-  });
+    const res = await fetch(`http://localhost:3000/news/${id}`, {
+        method: 'DELETE'
+    });
 
-  if (res.ok) {
-    loadNews(); // โหลดใหม่หลังลบ
-  } else {
-    alert('ลบไม่สำเร็จ');
-  }
+    if (res.ok) {
+        loadNews(); // โหลดใหม่หลังลบ
+    } else {
+        alert('ลบไม่สำเร็จ');
+    }
 }
 
 window.onload = () => {
-  loadNews();
+    loadNews();
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const newsForm = document.getElementById("newsForm");
-  const newsList = document.getElementById("newsList");
+    const newsForm = document.getElementById("newsForm");
+    const newsList = document.getElementById("newsList");
 
-  async function loadNews() {
-    const res = await fetch('http://localhost:3000/news');
-    const news = await res.json();
-    renderNews(news);
-  }
+    async function loadNews() {
+        const res = await fetch('http://localhost:3000/news');
+        const news = await res.json();
+        renderNews(news);
+    }
 
-  function renderNews(newsArray) {
-    newsList.innerHTML = '';
-    newsArray.forEach(item => {
-      const li = document.createElement('li');
-      li.innerHTML = `
+    function renderNews(newsArray) {
+        newsList.innerHTML = '';
+        newsArray.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = `
         <strong>${item.title}</strong>: ${item.detail}
         <button onclick="editNews(${item.id}, '${item.title}', \`${item.detail}\`)">แก้ไข</button>
         <button onclick="deleteNews(${item.id})">ลบ</button>
       `;
-      newsList.appendChild(li);
-    });
-  }
-
-  newsForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const title = newsForm.title.value.trim();
-    const detail = newsForm.detail.value.trim();
-    if (!title || !detail) return alert('กรุณากรอกข้อมูลให้ครบ');
-
-    const res = await fetch('http://localhost:3000/news', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, detail })
-    });
-
-    if (res.ok) {
-      newsForm.reset();
-      loadNews();
+            newsList.appendChild(li);
+        });
     }
-  });
 
-  window.deleteNews = async function (id) {
-    if (!confirm("ต้องการลบข่าวนี้หรือไม่?")) return;
-    const res = await fetch(`http://localhost:3000/news/${id}`, { method: 'DELETE' });
-    if (res.ok) loadNews();
-  };
+    newsForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const title = newsForm.title.value.trim();
+        const detail = newsForm.detail.value.trim();
+        if (!title || !detail) return alert('กรุณากรอกข้อมูลให้ครบ');
 
-  window.editNews = async function (id, oldTitle, oldDetail) {
-    const title = prompt("แก้ไขหัวข้อข่าว:", oldTitle);
-    const detail = prompt("แก้ไขรายละเอียด:", oldDetail);
-    if (title && detail) {
-      const res = await fetch(`http://localhost:3000/news/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, detail })
-      });
-      if (res.ok) loadNews();
-    }
-  };
+        const res = await fetch('http://localhost:3000/news', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, detail })
+        });
 
-  loadNews();
+        if (res.ok) {
+            newsForm.reset();
+            loadNews();
+        }
+    });
+
+    window.deleteNews = async function (id) {
+        if (!confirm("ต้องการลบข่าวนี้หรือไม่?")) return;
+        const res = await fetch(`http://localhost:3000/news/${id}`, { method: 'DELETE' });
+        if (res.ok) loadNews();
+    };
+
+    window.editNews = async function (id, oldTitle, oldDetail) {
+        const title = prompt("แก้ไขหัวข้อข่าว:", oldTitle);
+        const detail = prompt("แก้ไขรายละเอียด:", oldDetail);
+        if (title && detail) {
+            const res = await fetch(`http://localhost:3000/news/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, detail })
+            });
+            if (res.ok) loadNews();
+        }
+    };
+
+    loadNews();
 });
 
 function loadPajiabNews() {
-  fetch('http://localhost:3000/pajiabnews')
-    .then(response => response.json())
-    .then(news => {
-      const list = document.getElementById('pajiabNewsList');
-      list.innerHTML = '';
-      news.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `
+    fetch('http://localhost:3000/pajiabnews')
+        .then(response => response.json())
+        .then(news => {
+            const list = document.getElementById('pajiabNewsList');
+            list.innerHTML = '';
+            news.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
           <strong>${item.title}</strong><br>${item.detail}<br>
           <button onclick="editPajiabNews('${item.id}')">แก้ไข</button>
           <button onclick="deletePajiabNews('${item.id}')">ลบ</button>
         `;
-        list.appendChild(li);
-      });
-    })
-    .catch(err => console.error('โหลดข่าวป้าเจี๊ยบล้มเหลว:', err));
+                list.appendChild(li);
+            });
+        })
+        .catch(err => console.error('โหลดข่าวป้าเจี๊ยบล้มเหลว:', err));
 }
 
 function addPajiabNews(event) {
-  event.preventDefault();
-  const title = document.getElementById('pajiabTitle').value;
-  const detail = document.getElementById('pajiabDetail').value;
+    event.preventDefault();
+    const title = document.getElementById('pajiabTitle').value;
+    const detail = document.getElementById('pajiabDetail').value;
 
-  fetch('http://localhost:3000/pajiabnews', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, detail })
-  })
-    .then(res => res.json())
-    .then(() => {
-      loadPajiabNews();
-      document.getElementById('pajiabForm').reset();
+    fetch('http://localhost:3000/pajiabnews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, detail })
     })
-    .catch(err => console.error('เพิ่มข่าวป้าเจี๊ยบล้มเหลว:', err));
+        .then(res => res.json())
+        .then(() => {
+            loadPajiabNews();
+            document.getElementById('pajiabForm').reset();
+        })
+        .catch(err => console.error('เพิ่มข่าวป้าเจี๊ยบล้มเหลว:', err));
 }
 
 function editPajiabNews(id) {
-  const newTitle = prompt('แก้ไขหัวข้อข่าวใหม่:');
-  const newDetail = prompt('แก้ไขรายละเอียดข่าวใหม่:');
+    const newTitle = prompt('แก้ไขหัวข้อข่าวใหม่:');
+    const newDetail = prompt('แก้ไขรายละเอียดข่าวใหม่:');
 
-  if (!newTitle || !newDetail) return;
+    if (!newTitle || !newDetail) return;
 
-  fetch(`http://localhost:3000/pajiabnews/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: newTitle, detail: newDetail })
-  })
-    .then(res => res.json())
-    .then(() => loadPajiabNews())
-    .catch(err => console.error('แก้ไขข่าวล้มเหลว:', err));
+    fetch(`http://localhost:3000/pajiabnews/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle, detail: newDetail })
+    })
+        .then(res => res.json())
+        .then(() => loadPajiabNews())
+        .catch(err => console.error('แก้ไขข่าวล้มเหลว:', err));
 }
 
 function deletePajiabNews(id) {
-  if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข่าวนี้?')) return;
+    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข่าวนี้?')) return;
 
-  fetch(`http://localhost:3000/pajiabnews/${id}`, {
-    method: 'DELETE'
-  })
-    .then(res => res.json())
-    .then(() => loadPajiabNews())
-    .catch(err => console.error('ลบข่าวล้มเหลว:', err));
+    fetch(`http://localhost:3000/pajiabnews/${id}`, {
+        method: 'DELETE'
+    })
+        .then(res => res.json())
+        .then(() => loadPajiabNews())
+        .catch(err => console.error('ลบข่าวล้มเหลว:', err));
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  loadPajiabNews();
+    loadPajiabNews();
 });
 
-document.getElementById('pajiabNewsForm').addEventListener('submit', function(event) {
-  event.preventDefault();
-  const title = document.getElementById('pajiabNewsTitle').value.trim();
-  const detail = document.getElementById('pajiabNewsDetail').value.trim();
-
-  fetch('http://localhost:3000/pajiabnews', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, detail })
-  })
-    .then(res => res.json())
-    .then(() => {
-      loadPajiabNews();
-      document.getElementById('pajiabNewsForm').reset();
-    })
-    .catch(err => console.error('เพิ่มข่าวป้าเจี๊ยบล้มเหลว:', err));
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadPajiabNews();
-
-  const form = document.getElementById('pajiabNewsForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
+document.getElementById('pajiabNewsForm').addEventListener('submit', function (event) {
+    event.preventDefault();
     const title = document.getElementById('pajiabNewsTitle').value.trim();
     const detail = document.getElementById('pajiabNewsDetail').value.trim();
 
-    if (!title || !detail) {
-      alert('กรุณากรอกหัวข้อและเนื้อหาข่าว');
-      return;
-    }
-
-    try {
-      const res = await fetch('http://localhost:3000/pajiabnews', {
+    fetch('http://localhost:3000/pajiabnews', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, detail })
-      });
+    })
+        .then(res => res.json())
+        .then(() => {
+            loadPajiabNews();
+            document.getElementById('pajiabNewsForm').reset();
+        })
+        .catch(err => console.error('เพิ่มข่าวป้าเจี๊ยบล้มเหลว:', err));
+});
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert('เกิดข้อผิดพลาด: ' + (errorData.error || res.statusText));
-        return;
-      }
+document.addEventListener('DOMContentLoaded', () => {
+    loadPajiabNews();
 
-      form.reset();
-      loadPajiabNews();
-    } catch (error) {
-      alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
-      console.error(error);
-    }
-  });
+    const form = document.getElementById('pajiabNewsForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById('pajiabNewsTitle').value.trim();
+        const detail = document.getElementById('pajiabNewsDetail').value.trim();
+
+        if (!title || !detail) {
+            alert('กรุณากรอกหัวข้อและเนื้อหาข่าว');
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:3000/pajiabnews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, detail })
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                alert('เกิดข้อผิดพลาด: ' + (errorData.error || res.statusText));
+                return;
+            }
+
+            form.reset();
+            loadPajiabNews();
+        } catch (error) {
+            alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+            console.error(error);
+        }
+    });
 });
 
 async function loadPajiabNews() {
-  try {
-    const res = await fetch('http://localhost:3000/pajiabnews');
-    if (!res.ok) throw new Error('ไม่สามารถโหลดข่าวสารได้');
-    const newsList = await res.json();
+    try {
+        const res = await fetch('http://localhost:3000/pajiabnews');
+        if (!res.ok) throw new Error('ไม่สามารถโหลดข่าวสารได้');
+        const newsList = await res.json();
 
-    const ul = document.getElementById('pajiabNewsList');
-    ul.innerHTML = '';
+        const ul = document.getElementById('pajiabNewsList');
+        ul.innerHTML = '';
 
-    newsList.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = `${item.title} - ${item.detail}`;
+        newsList.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.title} - ${item.detail}`;
 
-      // ปุ่มลบ
-      const delBtn = document.createElement('button');
-      delBtn.textContent = 'ลบ';
-      delBtn.style.marginLeft = '10px';
-      delBtn.addEventListener('click', () => deletePajiabNews(item.id));
+            // ปุ่มลบ
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'ลบ';
+            delBtn.style.marginLeft = '10px';
+            delBtn.addEventListener('click', () => deletePajiabNews(item.id));
 
-      li.appendChild(delBtn);
-      ul.appendChild(li);
-    });
+            li.appendChild(delBtn);
+            ul.appendChild(li);
+        });
 
-  } catch (error) {
-    console.error(error);
-  }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 async function deletePajiabNews(id) {
-  if (!confirm('ต้องการลบข่าวสารนี้หรือไม่?')) return;
-  try {
-    const res = await fetch(`http://localhost:3000/pajiabnews/${id}`, {
-      method: 'DELETE'
-    });
-    if (!res.ok) throw new Error('ลบข้อมูลไม่สำเร็จ');
-    loadPajiabNews();
-  } catch (error) {
-    alert(error.message);
-  }
+    if (!confirm('ต้องการลบข่าวสารนี้หรือไม่?')) return;
+    try {
+        const res = await fetch(`http://localhost:3000/pajiabnews/${id}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) throw new Error('ลบข้อมูลไม่สำเร็จ');
+        loadPajiabNews();
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
 fetch('http://localhost:3000/pajiabnews', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ title, detail })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, detail })
 })
-.then(res => {
-  if (!res.ok) {
-    return res.text().then(msg => {
-      throw new Error(`Server error ${res.status}: ${msg}`);
+    .then(res => {
+        if (!res.ok) {
+            return res.text().then(msg => {
+                throw new Error(`Server error ${res.status}: ${msg}`);
+            });
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log('บันทึกสำเร็จ:', data);
+        form.reset();
+        loadPajiabNews();
+    })
+    .catch(err => {
+        alert('❌ ไม่สามารถบันทึกข้อมูลลง server ได้\n' + err.message);
+        console.error(err);
     });
-  }
-  return res.json();
-})
-.then(data => {
-  console.log('บันทึกสำเร็จ:', data);
-  form.reset();
-  loadPajiabNews();
-})
-.catch(err => {
-  alert('❌ ไม่สามารถบันทึกข้อมูลลง server ได้\n' + err.message);
-  console.error(err);
-});
