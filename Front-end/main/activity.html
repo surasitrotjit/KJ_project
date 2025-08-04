@@ -74,18 +74,18 @@
                 <div class="bell-icon">🔔</div>
                 <div>ภาพกิจกรรม</div>
             </div>
-            
+
             <!-- Loading indicator -->
             <div id="loading" class="loading">
                 <div class="spinner"></div>
             </div>
-            
+
             <!-- Container for activities -->
             <div id="activityContainer" class="activity-grid">
                 <!-- Activities will be loaded here dynamically -->
             </div>
         </div>
-        
+
         <!-- Footer -->
         <footer>
             <div class="school-footer-name">โรงเรียนอนุบาลกุลจินต์</div>
@@ -137,11 +137,6 @@
         const modalImage = document.getElementById('modalImage');
         const modalDescription = document.getElementById('modalDescription');
 
-        function openModal(imageSrc, description) {
-            modal.style.display = 'flex';
-            modalImage.src = imageSrc;
-            modalDescription.textContent = description;
-        }
         // ปิด modal เมื่อคลิกที่ว่าง (ยกเว้นคลิกที่รูปหรือคำอธิบาย)
         modal.addEventListener('click', function (event) {
             if (event.target === modal) {
@@ -156,6 +151,7 @@
             try {
                 const response = await fetch('http://localhost:3000/activities');
                 const activities = await response.json();
+                console.log('activities:', activities);
                 loadingElement.style.display = 'none';
                 if (activities.length === 0) {
                     activityContainer.innerHTML = '<div class="no-activities">ยังไม่มีกิจกรรมในขณะนี้</div>';
@@ -163,15 +159,22 @@
                 }
                 activityContainer.innerHTML = '';
                 activities.forEach(activity => {
+                    // รองรับทั้ง imagePath และ images
+                    const images = activity.imagePath || (activity.images ? activity.images.map(img => '/uploads/activity/' + img) : []);
+                    console.log('images:', images);
+                    const firstImage = images[0] ? "http://localhost:3000" + images[0] : '';
+                    console.log('firstImage:', firstImage);
+
                     const card = document.createElement('div');
                     card.className = 'activity-card';
                     card.innerHTML = `
-                        <img src="http://localhost:3000${activity.imagePath}" alt="กิจกรรม" class="activity-image">
+                        <img src="${firstImage}" alt="กิจกรรม" class="activity-image">
                         <div class="activity-info">${activity.detail}</div>
                         <a href="#" class="activity-btn">ดูเพิ่มเติม</a>
-                    `;
-                    card.addEventListener('click', () => {
-                        openModal("http://localhost:3000" + activity.imagePath, activity.detail);
+`;
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openModal(images.map(img => "http://localhost:3000" + img), activity.detail);
                     });
                     activityContainer.appendChild(card);
                 });
@@ -181,7 +184,28 @@
                 activityContainer.innerHTML = '<div class="no-activities">ไม่สามารถโหลดข้อมูลกิจกรรมได้ กรุณาลองใหม่อีกครั้ง</div>';
             }
         }
+
+        // ปรับ openModal ให้รองรับหลายรูป
+        function openModal(imageSrcArray, description) {
+            modal.style.display = 'flex';
+            modalImage.style.display = 'none'; // ซ่อนรูปเดิม
+
+            // สร้าง HTML สำหรับภาพแนวนอนและมีกรอบ
+            let imagesHtml = `<div style="display:flex;gap:16px;justify-content:center;align-items:flex-start;flex-wrap:wrap;">`;
+            imageSrcArray.forEach((src, idx) => {
+                imagesHtml += `
+            <div style="border:2px solid #2196f3;padding:8px;border-radius:8px;text-align:center;min-width:180px;background:#fff;">
+                <img src="${src}" class="modal-multi-image" style="max-width:160px;max-height:120px;display:block;margin-bottom:8px;">
+                <div style="font-size:14px;color:#2196f3;">ภาพที่ ${idx + 1}</div>
+            </div>
+        `;
+            });
+            imagesHtml += `</div>`;
+            modalDescription.innerHTML = `<div style="margin-bottom:12px;">${description}</div>${imagesHtml}`;
+        }
+
         document.addEventListener('DOMContentLoaded', loadActivities);
     </script>
 </body>
+
 </html>

@@ -28,7 +28,7 @@
       <a href="history.html" class="menu-item"><i class="fas fa-id-card"></i><span>ประวัติโรงเรียน</span></a>
       <a href="award.html" class="menu-item"><i class="fas fa-award"></i><span>รางวัลความภาคภูมิใจ</span></a>
       <a href="staff.html" class="menu-item"><i class="fas fa-user"></i><span>บุคลากร</span></a>
-      <a href="visitor.html" class="menu-item"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
+      <a href="visitor.html" class="menu-item active"><i class="fas fa-users"></i><span>ผู้เยี่ยมชม</span></a>
       <a href="Activity.html" class="menu-item"><i class="fas fa-camera"></i><span>ภาพกิจกรรม</span></a>
       <a href="https://www.facebook.com/groups/173373042841553/" target="_blank" class="menu-item"><i
           class="fas fa-comments"></i><span>ถาม-ตอบ</span></a>
@@ -127,7 +127,7 @@
         // ====== โหลด visitor จาก JSON ======
         async function loadVisitors() {
           try {
-            const res = await fetch('../data/visitors.json');
+            const res = await fetch('http://localhost:3000/visitors');
             const visitors = await res.json();
             const gallery = document.querySelector('.visitors-gallery');
             gallery.innerHTML = '';
@@ -138,18 +138,15 @@
             }
 
             visitors.forEach(visitor => {
-              const images = (visitor.images || []).map(img => `../visitors/${img}`).join(',');
-
+              const images = (visitor.images || []).map(img => `http://localhost:3000/uploads/visitors/${img}`);
               const item = document.createElement('div');
               item.className = 'visitors-item';
               item.setAttribute('data-desc', visitor.detail || '');
-              item.setAttribute('data-images', images);
+              item.setAttribute('data-images', JSON.stringify(images));
 
               const mainImg = document.createElement('img');
               mainImg.className = 'visitors-img';
-              mainImg.src = visitor.images && visitor.images.length > 0
-                ? `../visitors/${visitor.images[0]}`
-                : '../Image/logo.png';
+              mainImg.src = images[0] || '../Image/logo.png';
               mainImg.alt = visitor.detail || '';
               mainImg.onclick = () => showPopup(item);
 
@@ -168,7 +165,7 @@
 
         function showPopup(item) {
           const desc = item.getAttribute('data-desc') || '';
-          const images = item.getAttribute('data-images').split(',').filter(Boolean);
+          const images = JSON.parse(item.getAttribute('data-images') || '[]');
 
           document.getElementById('popupText').textContent = desc;
           const gallery = document.getElementById('popupGallery');

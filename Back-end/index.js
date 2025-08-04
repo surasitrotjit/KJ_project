@@ -116,7 +116,7 @@ app.post('/activities', uploadActivity.array('images', 10), (req, res) => {
         const newActivity = {
             id: Date.now().toString(),
             detail: req.body.detail,
-            images: req.files ? req.files.map(f => f.filename) : []
+            imagePath: req.files ? req.files.map(f => '/uploads/activity/' + f.filename) : []
         };
         activities.push(newActivity);
         fs.writeFile(activitiesFile, JSON.stringify(activities, null, 2), () => {
