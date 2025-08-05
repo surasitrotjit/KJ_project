@@ -503,7 +503,7 @@ ul li {
 }
 .visitor-card .visitor-desc {
   margin-bottom: 8px;
-  text-align: center;
+  text-align: center; 
 }
 .visitor-card button {
   margin: 0 4px;
