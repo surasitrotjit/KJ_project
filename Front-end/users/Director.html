@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>หน้าผู้อำนวยการ</title>
+  <link rel="stylesheet" href="Director.css" />
+  <script defer src="Director.js"></script>
+</head>
+
+<body>
+  <header class="top-bar">
+    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo" />
+    <h1>โรงเรียนอนุบาลกุลจินต์</h1>
+  </header>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="admin-profile">
+        <img src="../users/imguser/Director.png" alt="Director" />
+        <p>ผู้อำนวยการ</p>
+        <button onclick="window.location.href='../main/main.html'">ออกจากระบบ</button>
+      </div>
+      <nav class="sidebar-menu">
+        <details open>
+          <summary>เมนูผู้อำนวยการ</summary>
+          <button onclick="showSection('students')">รายชื่อนักเรียน</button>
+          <button onclick="showSection('reports')">รายงานประจำวัน</button>
+        </details>
+      </nav>
+    </aside>
+
+    <main class="content-area">
+      <!-- รายชื่อนักเรียน -->
+      <section id="students" class="content-section">
+        <h2>รายชื่อนักเรียน</h2>
+        <table id="studentTable" border="1" cellspacing="0" cellpadding="8">
+          <thead>
+            <tr>
+              <th>ชื่อ</th>
+              <th>นามสกุล</th>
+              <th>ชั้นเรียน</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ข้อมูลจะถูกเติมโดย JS -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- รายงานประจำวัน -->
+      <section id="reports" class="content-section hidden">
+        <h2>รายงานประจำวัน</h2>
+        <ul id="dailyReports">
+          <!-- รายงานจะถูกเติมโดย JS -->
+        </ul>
+      </section>
+    </main>
+  </div>
+</body>
+
+</html>

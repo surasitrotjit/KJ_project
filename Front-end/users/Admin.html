@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adminpage</title>
+  <link rel="stylesheet" href="Administrator.css">
+  <script defer src="script.js"></script>
+</head>
+<!-- id : user06: { password: "6789", role: "Administrator" }, -->
+
+<body>
+  <header class="top-bar">
+    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo">
+    <h1>โรงเรียนอนุบาลกุลจินต์</h1>
+  </header>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="admin-profile">
+        <img src="../users/imguser/Nong.png" alt="Admin" />
+        <p>ผู้ดูแลระบบ</p>
+        <button onclick="logout()">ออกจากระบบ</button>
+      </div>
+      <nav class="sidebar-menu">
+        <details>
+          <summary>การจัดการข้อมูล</summary>
+          <button onclick="showSection('activity')">จัดการกิจกรรม</button>
+          <button onclick="showSection('award')">จัดการรางวัล</button>
+          <button onclick="showSection('visitor')">จัดการผู้มาเยี่ยมชม</button>
+          <button onclick="showSection('news')">จัดการข่าวสาร</button>
+          <button onclick="showSection('auntieNews')">ข่าวสารป้าเจี๊ยบ</button>
+          <button onclick="showSection('students')">ข้อมูลนักเรียน</button>
+          <button onclick="showSection('addstudent')">เพิ่มนักเรียน</button>
+        </details>
+        <details>
+          <summary>ตารางเรียน</summary>
+          <button onclick="showSection('schedule')">ตารางเรียน</button>
+          <button onclick="showSection('editSchedule')">แก้ไขตารางเรียน</button>
+        </details>
+      </nav>
+    </aside>
+
+    <main class="content-area">
+      <!-- กิจกรรม -->
+      <section id="activity" class="content-section hidden">
+        <h2>เพิ่มกิจกรรม</h2>
+        <form id="activityForm" method="POST" enctype="multipart/form-data" style="margin-bottom:20px;">
+          <label>รายละเอียดกิจกรรม:<br>
+            <textarea name="detail" required rows="3" style="width:100%;"></textarea>
+          </label><br>
+          <label>เลือกรูปภาพกิจกรรม:<br>
+            <input type="file" name="images" id="activityImages" accept="image/*" multiple required>
+          </label><br>
+          <button type="submit">เพิ่มกิจกรรม</button>
+          <span id="uploadLoading" style="display:none;">กำลังอัพโหลด...</span>
+        </form>
+        <h3>กิจกรรมทั้งหมด</h3>
+        <div id="activityGallery"></div>
+        <div id="activityModal" class="modal" style="display:none;">
+          <div class="modal-content">
+            <span id="closeActivityModal" class="close">&times;</span>
+            <img id="activityModalImg" src="" alt="activity" style="max-width:100%;margin-bottom:12px;">
+            <div id="activityModalDetail"></div>
+            <div id="activityModalActions"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- รางวัล -->
+      <section id="award" class="content-section hidden">
+        <h2>เพิ่มรางวัล</h2>
+        <form id="awardForm" enctype="multipart/form-data">
+          <input type="text" name="winner" placeholder="ชื่อผู้ได้รับรางวัล" required>
+          <input type="text" name="awardName" placeholder="ชื่อรางวัล" required>
+          <input type="text" name="detail" placeholder="รายละเอียด" required>
+          <input type="file" name="image" required />
+          <button type="submit">เพิ่มรางวัล</button>
+        </form>
+        <div id="awardGallery" class="gallery"></div>
+      </section>
+
+      <!-- ผู้มาเยี่ยมชม -->
+      <section id="visitor" class="content-section hidden">
+        <h2>เพิ่มผู้มาเยี่ยมชม</h2>
+        <form id="visitorForm" enctype="multipart/form-data">
+          <label>เลือกรูปภาพผู้เยี่ยมชม:</label>
+          <input type="file" name="images" id="visitorImages" multiple>
+          <label>รายละเอียดผู้เยี่ยมชม:</label>
+          <textarea name="detail" required></textarea>
+          <button type="submit">บันทึก</button>
+        </form>
+        <div id="visitorGallery" class="gallery"></div>
+      </section>
+
+      <!-- ข่าวสาร -->
+      <section id="news" class="content-section hidden">
+        <h2>จัดการข่าวสาร</h2>
+        <form id="newsForm">
+          <label>หัวข้อข่าว:</label>
+          <input type="text" name="title" required />
+          <label>รายละเอียด:</label>
+          <textarea name="detail" required></textarea>
+          <button type="submit">บันทึก</button>
+        </form>
+        <ul id="newsList"></ul>
+      </section>
+
+      <!-- นักเรียน -->
+      <section id="students" class="content-section hidden">
+        <h2>ข้อมูลนักเรียน</h2>
+        <div id="studentGroups"></div>
+      </section>
+
+      <!-- ตารางรายชื่อนักเรียน -->
+      <section id="studentTableSection" class="content-section hidden">
+        <h2>ตารางรายชื่อนักเรียน</h2>
+        <div id="studentTableContainer"></div>
+      </section>
+
+      <!-- ข่าวสารป้าเจี๊ยบ -->
+      <section id="auntieNews" class="content-section hidden">
+        <h2>การจัดการข่าวสารป้าเจี๊ยบ</h2>
+        <form id="pajiabNewsForm">
+          <label for="pajiabNewsTitle">หัวข้อข่าว:</label>
+          <input type="text" id="pajiabNewsTitle" name="title" required />
+
+          <label for="pajiabNewsDetail">เนื้อหาข่าว:</label>
+          <textarea id="pajiabNewsDetail" name="detail" required></textarea>
+
+          <button type="submit">บันทึก</button>
+        </form>
+
+        <ul id="pajiabNewsList"></ul>
+      </section>
+
+      <!-- เพิ่มนักเรียน -->
+      <section id="addstudent" class="content-section hidden">
+        <h2>เพิ่มนักเรียน</h2>
+        <form id="addStudentForm">
+          <label for="studentId">รหัสนักเรียน:</label>
+          <input type="text" id="studentId" name="studentId" required />
+
+          <label for="studentFirstName">ชื่อ:</label>
+          <input type="text" id="studentFirstName" name="firstName" required />
+
+          <label for="studentLastName">นามสกุล:</label>
+          <input type="text" id="studentLastName" name="lastName" required />
+
+          <label for="studentNickname">ชื่อเล่น:</label>
+          <input type="text" id="studentNickname" name="nickname" required />
+
+          <label for="studentClass">ชั้นเรียน:</label>
+          <select id="studentClass" name="class" required>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1">ป.1</option>
+            <option value="ป.2">ป.2</option>
+            <option value="ป.3">ป.3</option>
+          </select>
+          <button type="submit">บันทึก</button>
+        </form>
+      </section>
+      <section id="schedule" class="content-section hidden">
+        <h2>ตารางเรียน</h2>
+        <label>เลือกชั้นเรียน:
+          <select id="scheduleClassSelect" required>
+            <option value="" disabled selected hidden>เลือกชั้นเรียน</option>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1/1">ป.1/1</option>
+            <option value="ป.2/1">ป.2/1</option>
+            <option value="ป.3/1">ป.3/1</option>
+          </select>
+        </label>
+        <label>เลือกวัน:
+          <select id="scheduleDaySelect">
+            <option value="">ทุกวัน</option>
+            <option value="จันทร์">จันทร์</option>
+            <option value="อังคาร">อังคาร</option>
+            <option value="พุธ">พุธ</option>
+            <option value="พฤหัสบดี">พฤหัสบดี</option>
+            <option value="ศุกร์">ศุกร์</option>
+          </select>
+        </label>
+        <button id="showScheduleBtn" type="button">ดูตารางเรียน</button>
+        <div id="showScheduleTableContainer" style="margin-top:24px;"></div>
+      </section>
+      <section id="editSchedule" class="content-section hidden">
+        <h2>แก้ไขตารางเรียน</h2>
+        <label>เลือกชั้นเรียน:
+          <select id="editScheduleClassSelect" required>
+            <option value="" disabled selected hidden>เลือกชั้นเรียน</option>
+            <option value="อนุบาล 1">🧒🏻 อนุบาล 1</option>
+            <option value="อนุบาล 2">🧒🏼 อนุบาล 2</option>
+            <option value="อนุบาล 3">🧒🏽 อนุบาล 3</option>
+            <option value="ป.1/1">📘 ป.1/1</option>
+            <option value="ป.2/1">📗 ป.2/1</option>
+            <option value="ป.3/1">📙 ป.3/1</option>
+          </select>
+        </label>
+        <label>เลือกวัน:
+          <select id="editScheduleDaySelect" required>
+            <option value="" disabled selected hidden>เลือกวัน</option>
+            <option value="จันทร์">จันทร์</option>
+            <option value="อังคาร">อังคาร</option>
+            <option value="พุธ">พุธ</option>
+            <option value="พฤหัสบดี">พฤหัสบดี</option>
+            <option value="ศุกร์">ศุกร์</option>
+          </select>
+        </label>
+        <button id="showScheduleTableBtn" type="button">ดูตารางเรียน</button>
+        <div id="editScheduleFormContainer"></div>
+        <div id="scheduleTableContainer" style="margin-top:24px;"></div>
+      </section>
+
+      <!-- Modal แก้ไขนักเรียน -->
+      <div id="editStudentModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span id="closeEditModal" class="close">&times;</span>
+          <h2>แก้ไขข้อมูลนักเรียน</h2>
+          <form id="editStudentForm">
+            <input type="hidden" id="editStudentId" />
+            <label>รหัสนักเรียน:</label>
+            <input type="text" id="editStudentIdInput" required />
+            <label>ชื่อ:</label>
+            <input type="text" id="editStudentFirstName" required />
+            <label>นามสกุล:</label>
+            <input type="text" id="editStudentLastName" required />
+            <label>ชื่อเล่น:</label>
+            <input type="text" id="editStudentNickname" required />
+            <label>ชั้นเรียน:</label>
+            <select id="editStudentClass" required>
+              <option value="อนุบาล 1">อนุบาล 1</option>
+              <option value="อนุบาล 2">อนุบาล 2</option>
+              <option value="อนุบาล 3">อนุบาล 3</option>
+              <option value="ป.1/1">ป.1/1</option>
+              <option value="ป.2/1">ป.2/1</option>
+              <option value="ป.3/1">ป.3/1</option>
+            </select>
+            <button type="submit">บันทึก</button>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="visitorModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeVisitorModal" class="close" style="cursor:pointer;font-size:2em;">&times;</span>
+      <img id="visitorModalImg" src="" alt="visitor" style="max-width:100%;margin-bottom:12px;">
+      <div id="visitorModalDetail"></div>
+    </div>
+  </div>
+</body>
+<script>
+  // ตรวจสอบ token เมื่อโหลดหน้า
+  window.onload = async function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('กรุณาเข้าสู่ระบบก่อน');
+      window.location.href = "../main/login.html";
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:3000/verify-token', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error("Token หมดอายุหรือไม่ถูกต้อง");
+      }
+
+      // Token ใช้งานได้
+    } catch (err) {
+      alert('Session หมดอายุ กรุณาเข้าสู่ระบบใหม่');
+      localStorage.clear();
+      window.location.href = "../main/login.html";
+    }
+  };
+
+  // logout function
+  function logout() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch('http://localhost:3000/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).finally(() => {
+        localStorage.clear();
+
+        // Force reload เพื่อไม่ให้ใช้ cache
+        window.location.replace('../main/login.html');
+      });
+    } else {
+      localStorage.clear();
+      window.location.replace('../main/login.html');
+    }
+  }
+
+  // showSection function
+  function showSection(id) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+    const sec = document.getElementById(id);
+    if (sec) sec.classList.remove('hidden');
+  }
+
+  // --- Award Section ---
+  document.addEventListener('DOMContentLoaded', function () {
+    // โหลดรางวัลทั้งหมด
+    async function loadAwards() {
+      const res = await fetch('http://localhost:3000/awards');
+      return await res.json();
+    }
+    // แสดงรางวัลทั้งหมด
+    async function renderAwardGallery() {
+      const gallery = document.getElementById('awardGallery');
+      if (!gallery) return;
+      gallery.innerHTML = '<div>กำลังโหลด...</div>';
+      const awards = await loadAwards();
+      gallery.innerHTML = '';
+      const validAwards = awards.filter(a => a && a.id && a.detail && a.detail.trim() !== '');
+      validAwards.forEach(award => {
+        const card = document.createElement('div');
+        card.className = 'award-card';
+        card.innerHTML = `
+            <img src="http://localhost:3000${award.imagePath}" alt="รางวัล" class="award-img" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin:4px;">
+            <div class="award-detail">${award.detail || ''}</div>
+            <div style="margin-top:8px;">
+                <button onclick="editAward('${award.id}')">แก้ไข</button>
+                <button onclick="deleteAward('${award.id}')">ลบ</button>
+            </div>
+        `;
+        gallery.appendChild(card);
+      });
+    }
+    // เพิ่มรางวัลใหม่ (form POST)
+    window.addAward = async function (e) {
+      e.preventDefault();
+      const form = document.getElementById('awardForm');
+      const formData = new FormData(form);
+      // ตรวจสอบข้อมูลซ้ำ
+      const allAwards = await loadAwards();
+      const winner = formData.get('winner') || '';
+      const awardName = formData.get('awardName') || '';
+      const detail = formData.get('detail') || '';
+      const isDuplicate = allAwards.some(item =>
+        item.winner === winner &&
+        item.awardName === awardName &&
+        item.detail === detail
+      );
+      if (isDuplicate) {
+        const confirmDup = confirm('ข้อมูลนี้ซ้ำกับรางวัลที่มีอยู่แล้ว ต้องการบันทึกซ้ำหรือไม่?');
+        if (!confirmDup) return;
+      }
+      const res = await fetch('http://localhost:3000/awards', {
+        method: 'POST',
+        body: formData
+      });
+      if (res.ok) {
+        alert('เพิ่มรางวัลสำเร็จ');
+        form.reset();
+        renderAwardGallery();
+      } else {
+        alert('เกิดข้อผิดพลาดในการเพิ่มรางวัล');
+      }
+    };
+    // ลบรางวัล
+    window.deleteAward = async function (id) {
+      if (!confirm('ยืนยันการลบรางวัลนี้?')) return;
+      const res = await fetch(`http://localhost:3000/awards/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        alert('ลบสำเร็จ');
+        renderAwardGallery();
+      } else {
+        alert('เกิดข้อผิดพลาดในการลบ');
+      }
+    };
+    // แก้ไขรางวัล (prompt detail ใหม่)
+    window.editAward = async function (id) {
+      const awards = await loadAwards();
+      const award = awards.find(a => a.id == id);
+      if (!award) return alert('ไม่พบรางวัล');
+      const newDetail = prompt('แก้ไขรายละเอียดรางวัล:', award.detail);
+      if (newDetail !== null && newDetail !== award.detail) {
+        const res = await fetch(`http://localhost:3000/awards/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ detail: newDetail })
+        });
+        if (res.ok) {
+          alert('แก้ไขสำเร็จ');
+          renderAwardGallery();
+        } else {
+          alert('เกิดข้อผิดพลาดในการแก้ไข');
+        }
+      }
+    };
+    // เชื่อมฟอร์มกับ addAward
+    const awardForm = document.getElementById('awardForm');
+    if (awardForm) awardForm.addEventListener('submit', window.addAward);
+    if (document.getElementById('awardGallery')) renderAwardGallery();
+    });
+</script>
+</html>

@@ -1,0 +1,229 @@
+/* ตั้งค่าพื้นฐาน */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Prompt", sans-serif;
+}
+
+body {
+  background-color: #f9f9ff;
+  color: #333;
+}
+
+.top-bar {
+  background-color: #ff7eb9;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar .logo {
+  height: 50px;
+  margin-right: 20px;
+}
+
+.top-bar h1 {
+  flex: 1;
+  font-size: 1.5rem;
+}
+
+.top-bar button {
+  background-color: #fff;
+  color: #ff4d88;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.top-bar button:hover {
+  background-color: #ffe6f0;
+}
+
+/* Layout หลัก */
+.main-layout {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: #ffe0f0;
+  padding: 20px;
+  border-right: 2px solid #ffcce5;
+}
+
+.teacher-profile {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.teacher-profile img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #ff99cc;
+  margin-bottom: 10px;
+}
+
+.teacher-profile p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #d63384;
+}
+
+.sidebar-menu button {
+  display: block;
+  width: 100%;
+  background-color: #ffb3d9;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar-menu button:hover {
+  background-color: #ff80bf;
+}
+
+/* Content Area */
+.content-area {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.content-section {
+  display: none;
+}
+
+.content-section.active,
+.content-section:not(.hidden) {
+  display: block;
+}
+
+.content-section h2 {
+  margin-bottom: 20px;
+  color: #cc007a;
+}
+
+/* ตารางนักเรียน */
+#studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#studentTable th,
+#studentTable td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+#studentTable th {
+  background-color: #ffe6f0;
+  color: #cc0066;
+}
+
+/* ฟอร์มประเมินผล */
+form#evaluationForm {
+  background-color: #fff0f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+form#evaluationForm label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+form#evaluationForm input,
+form#evaluationForm textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+form#evaluationForm button {
+  margin-top: 15px;
+  background-color: #ff66a3;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+form#evaluationForm button:hover {
+  background-color: #ff3385;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .sidebar-menu button {
+    width: 45%;
+    margin: 5px;
+  }
+
+  .content-area {
+    padding: 15px;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.student-table {
+  width: 100%;
+  max-width: 1400px;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  table-layout: fixed;
+}
+
+.student-table th, .student-table td {
+  border: 1px solid #aaa;
+  padding: 8px 12px;
+  text-align: left;
+  word-break: break-word;
+}
+
+.student-table th {
+  background: #ffe0f0;
+  font-weight: bold;
+}
+
+.student-table tr:nth-child(even) {
+  background: #f9f9f9;
+}

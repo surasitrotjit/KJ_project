@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แบบคัดกรองบุคคลออทิสติก</title> 
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+  <div class="container"><hr>
+    <h2>แบบคัดกรองบุคคลออทิสติก</h2><hr>
+
+    <!-- หน้าจอข้อตกลง -->
+    <div id="agreementSection">
+      <h3>ข้อตกลงการใช้งาน</h3>
+      <p>ข้อตกลงเบื้องต้น เพื่ความเข้าใจที่ตรงกันระหว่างผู้ทำแบบประเมิณและผู้ประเมิณ ซึ่งมีเนื้อหาและรายระเอียดดังนี้ :</p>
+      <div class="agreement-box">
+        <p>เนื้อหาข้อตกลง</p>
+        <dl>
+          <dt>1. แบบคัดกรองฉบับนี้</dt>
+          <dd>เป็นแบบจำแนกทางการศึกษา เพื่อการประเมินเบื้องต้นเท่านี้</dd>
+          <dt>2. ผลการประเมินที่ได้</dt>
+          <dd>ไม่ใช่ข้อสรุปโดยตรงสำหรับการรักษาของเด็กแต่ละคน</dd>
+          <dt>3. ผู้ทำการคัดกรองเบื้องต้น</dt>
+          <dd> ได้แก่ ผู้ปกครองหรือครู เพื่อให้เกิดความชัดเจนกับข้อมูลในการประเมินมากที่สุด</dd>
+        </dl>
+      </div>
+
+      <form id="agreementForm">
+        <label>
+          <input type="checkbox" name="agree" required> ฉันยอมรับข้อตกลงข้างต้น
+        </label>
+        <button type="submit">ยืนยัน</button>
+      </form>
+    </div>
+
+    <!-- ฟอร์มประเมิน -->
+    <div id="formSection" style="display:none;">
+        <form id="autismForm">
+          <div class="form-section">
+      
+            <!-- Row 1: ชื่อ - เพศ -->
+            <div class="form-row">
+              <label>ชื่อ - นามสกุล: <input type="text" name="fullname"></label>
+              <label>เพศ:
+                <input type="radio" name="gender" value="ชาย"> ชาย
+                <input type="radio" name="gender" value="หญิง"> หญิง
+              </label>
+            </div>
+      
+            <!-- Row 2: อายุ - ว/ด/ป -->
+            <div class="form-row">
+              <label>อายุ: <input type="number" name="age"> ปี</label>
+              <label>วัน/เดือน/ปี เกิด: <input type="date" name="dob"></label>
+            </div>
+      
+            <!-- Row 3: ชั้น - วันที่ประเมิน - ครั้งที่ -->
+            <div class="form-row">
+              <label>ชั้น: <input type="text" name="class"></label>
+              <label>วันที่ประเมิน: <input type="date" name="eval_date"></label>
+              <label>ครั้งที่: <input type="number" name="round"></label>
+            </div>
+
+        <p><strong>คำชี้แจง:</strong></p>
+        <ul>
+          <li>1. สังเกตลักษณะ/พฤติกรรมของเด็ก แล้วทำเครื่องหมายในข้อที่พบ</li>
+          <li>2. กรุณาประเมินตามความเป็นจริง เพื่อความถูกต้องของผลการประเมิน</li>
+        </ul>
+
+        <h3>ด้านภาษาและการสื่อความหมาย</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ที่</th>
+              <th>ลักษณะ / พฤติกรรม</th>
+              <th>การสังเกต</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>ไม่สามารถพูดเป็นคำที่มีความหมายได้</td><td><input type="checkbox" name="item1"></td></tr>
+            <tr><td>2</td><td>เล่นเสียงออกเสียงแบบไม่มีความหมาย</td><td><input type="checkbox" name="item2"></td></tr>
+            <tr><td>3</td><td>พูดคำซ้ำๆ ในทีวี เช่น พูดตามโฆษณาทีวี</td><td><input type="checkbox" name="item3"></td></tr>
+            <tr><td>4</td><td>ช้ท่าทางแทนคำพูดเมื่อต้องการสิ่งของ</td><td><input type="checkbox" name="item4"></td></tr>
+            <tr><td>5</td><td>ใช้ภาษาและวิธีการสื่อสารที่คนอื่นไม่เข้าใจ</td><td><input type="checkbox" name="item5"></td></tr>
+            <tr><td>6</td><td>ไม่ตอบสนองเสียงเรียก นิ่งเฉย</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>7</td><td>ทำเสียงแปลกๆ ในขณะเล่นกับตนเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>8</td><td>เลียนแบบและเล่นบทบาทสมมติไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>9</td><td>ไม่สามารถสื่อสารให้รู้ว่า หิว ขับถ่าย</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>10</td><td>แสดงสีหน้า โกรธ รัก เจ็บ ไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>11</td><td>ไม่สามารถปฏิบัติตามคำสั่งง่ายๆ ได้</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>12</td><td>เริ่มต้นบทสนทนาไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>13</td><td>สื่อสารกับคนอื่นไม่เข้าใจ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>14</td><td>พูดวกวนไปมา พูดคำซ้ำๆ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>15</td><td>ไม่สามารถบอกชื่อสิ่งของได้</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>16</td><td>ไม่รู้ว่าตัวเองชื่ออะไร</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>17</td><td>คร่ำครวญ แบบไม่มีเหตุผล</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>18</td><td>ทำร้ายตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>19</td><td>เฉื่อยชา เหม่อลอย ไม่รู้ร้อนรู้หนาว</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>20</td><td>ก้าวร้าว ชอบทำร้ายคนอื่นและทำลายของ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>21</td><td>ซนผิดปกติ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>22</td><td>ชอบของกลมๆ หมุนๆ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>23</td><td>ชอบดูใบไม้แกว่ง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>24</td><td>ชอบเล่นเชือก</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>25</td><td>มีโลกส่วนตัวมาก</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>26</td><td>เล่นของเล่นไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>27</td><td>เล่นกับเพื่อนไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>28</td><td>ไม่กล้าสบตาผู้อื่น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>29</td><td>ทำร้ายผู้อื่น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>30</td><td>ไม่เข้าใจกฎกติกา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>31</td><td>นิ่งผิดปกติ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>32</td><td>ไม่สนใจคนรอบข้าง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>33</td><td>อ่านสีหน้าของคู่สนทนา โกรธ เจ็บ กลัว เกลียด ไม่เป็น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>34</td><td>ไม่ตอบสนองต่อความเจ็บปวด</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>35</td><td>หัวเราะไม่มีเหตุผล</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>36</td><td>ไม่มีปฎิสังคมกับผู้อื่น</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>37</td><td>กลัวเสียงดังต่างๆ เช่น เสียงเปิดคอมพิวเตอร์</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>38</td><td>การมองเลื่อนลอย ไม่มีจุดหมาย</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>39</td><td>ชูมือไว้ใกล้หน้าตัวเอง แล้วสลัดนิ้วไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>40</td><td>จับของหมุนไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>41</td><td>นั่งโยกตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>42</td><td>นั่งโยกศีรษะ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>43</td><td>ใช้ฝ่ามือเคาะโต๊ะ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>44</td><td>เด็ดใบไม้ แล้วนำมาสลัดด้านหน้าตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>45</td><td>เล่นเชือก นำเชือกมาแกว่งไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>46</td><td>จ้องมองตัวเองนานๆ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>47</td><td>เล่นหัวนมตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>48</td><td>ตบหน้าตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>49</td><td>เอามือแตะน้ำลาย แล้วแตะของทั่วไป</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>50</td><td>นำกระดาษมาโบกไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>51</td><td>ยืนแล้วหมุนตัวเอง</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>52</td><td>จับสิ่งของแล้วโบกไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>53</td><td>แกะแผลใส่ปาก</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>54</td><td>เดินเขย่งปลายเท้าไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>55</td><td>วิ่งไปมา ด้วยปลายเท้า</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>56</td><td>ปีนป่ายสิ่งของ</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>57</td><td>วิ่งถลาพุ่งตัวไปข้างหน้าอย่างรวดเร็ว</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>58</td><td>กระโดดขึ้นลงอยู่ตลอด</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>59</td><td>สลัดด้านหน้าของตัวเองไปมา</td><td><input type="checkbox" name="item6"></td></tr>
+            <tr><td>60</td><td>เอามือแตะน้ำลายแล้วแตะสิ่งของ</td><td><input type="checkbox" name="item6"></td></tr>
+          </tbody>
+        </table>
+
+        <button type="submit">ส่งแบบฟอร์ม</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript สำหรับการแสดงและซ่อนส่วนต่างๆ ของหน้า
+    document.getElementById('agreementForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      // ตรวจสอบว่าเลือกข้อตกลงแล้วหรือไม่
+      if (document.querySelector('input[name="agree"]:checked')) {
+        // ซ่อนหน้าข้อตกลงและแสดงฟอร์ม
+        document.getElementById('agreementSection').style.display = 'none';
+        document.getElementById('formSection').style.display = 'block';
+      } else {
+        alert('กรุณายอมรับข้อตกลงก่อน');
+      }
+    });
+  </script>
+</body>
+</html>

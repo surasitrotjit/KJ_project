@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>หน้าผู้รับใบอนุญาต</title>
+  <link rel="stylesheet" href="Licensee.css" />
+  <script defer src="Licensee.js"></script>
+</head>
+
+<body>
+  <header class="top-bar">
+    <img src="../Image/logo.png" alt="โรงเรียนอนุบาลกุลจินต์" class="logo" />
+    <h1>โรงเรียนอนุบาลกุลจินต์</h1>
+  </header>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="admin-profile">
+        <img src="../users/imguser/Jeab.png" alt="License Owner" />
+        <p>ผู้รับใบอนุญาต</p>
+        <button onclick="window.location.href='../main/main.html'">ออกจากระบบ</button>
+      </div>
+      <nav class="sidebar-menu">
+        <details open>
+          <summary>เมนูผู้รับใบอนุญาต</summary>
+          <button onclick="showSection('overview')">รายชื่อนักเรียน</button>
+          <button onclick="showSection('addStudent')">เพิ่มนักเรียน</button>
+        </details>
+      </nav>
+    </aside>
+
+    <main class="content-area">
+      <!-- รายชื่อนักเรียน -->
+      <section id="overview" class="content-section">
+        <h2>รายชื่อนักเรียน</h2>
+        <table id="studentTable" border="1" cellspacing="0" cellpadding="8">
+          <thead>
+            <tr>
+              <th>ชื่อ</th>
+              <th>นามสกุล</th>
+              <th>ชั้นเรียน</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ข้อมูลจะถูกเติมโดย JS -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- เพิ่มนักเรียน -->
+      <section id="addStudent" class="content-section hidden">
+        <h2>เพิ่มนักเรียน</h2>
+        <form id="addStudentForm">
+
+          <label for="firstName">ชื่อ:</label>
+          <input type="text" id="firstName" name="firstName" required />
+
+          <label for="lastName">นามสกุล:</label>
+          <input type="text" id="lastName" name="lastName" required />
+
+          <label for="class">ชั้นเรียน:</label>
+          <select id="class" name="class" required>
+            <option value="">-- เลือกชั้นเรียน --</option>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ป.1">ป.1</option>
+            <option value="ป.2">ป.2</option>
+            <option value="ป.3">ป.3</option>
+          </select>
+
+          <button type="submit">เพิ่มนักเรียน</button>
+        </form>
+      </section>
+    </main>
+  </div>
+</body>
+
+</html>
